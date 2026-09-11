@@ -65,22 +65,19 @@ No environment variables are required.
 **Everything lives in one file: [`lib/data.ts`](lib/data.ts).** Change the text
 there and the whole site updates. No component edits needed for normal updates.
 
-### ⚠️ Before you deploy — fill in these placeholder links
+### Your links (already wired up)
 
-Open `lib/data.ts` and replace every value marked `// TODO`:
+All profile, repo, and demo links are set in `lib/data.ts`. To change them later:
 
 | What | Where in `lib/data.ts` |
 |------|------------------------|
-| GitHub profile URL | `PROFILE.github` |
-| LinkedIn URL | `PROFILE.linkedin` |
-| LeetCode URL | `PROFILE.leetcode` |
+| GitHub / LinkedIn / LeetCode | `PROFILE.github` / `.linkedin` / `.leetcode` |
 | Pit Wall repo + live demo | `CASE_FILES[0].links` |
 | Resolvr repo | `CASE_FILES[1].links` |
 | AI Mock Interviewer repo | `CASE_FILES[2].links` |
 
-The email (`mithil.batra05@gmail.com`) and phone are already set from your
-résumé. If a case file has no live demo, just delete the `live:` line — the
-button disappears automatically.
+Email and phone are set from your résumé. If a case file has no live demo, just
+delete its `live:` line — the button disappears automatically.
 
 ### Replace the résumé PDF
 

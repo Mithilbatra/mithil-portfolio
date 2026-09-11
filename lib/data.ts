@@ -2,9 +2,6 @@
  * ─────────────────────────────────────────────────────────────
  *  CONTENT — single source of truth for the whole site.
  *  Edit anything here; the UI updates automatically.
- *
- *  ⚠️  TODO before deploying: replace the placeholder URLs marked
- *      `// TODO` with your real profile / repo / demo links.
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -23,10 +20,10 @@ export const PROFILE = {
   email: "mithil.batra05@gmail.com",
   phone: "+91 8810397089",
 
-  // Profiles — TODO: confirm these handles are correct
-  github: "https://github.com/mithilbatra", // TODO: confirm GitHub handle
-  linkedin: "https://www.linkedin.com/in/mithilbatra", // TODO: confirm LinkedIn URL
-  leetcode: "https://leetcode.com/u/mithilbatra", // TODO: confirm LeetCode handle
+  // Profiles
+  github: "https://github.com/mithilbatra",
+  linkedin: "https://www.linkedin.com/in/mithilbatra",
+  leetcode: "https://leetcode.com/u/mithilbatra",
 
   resumePath: "/resume.pdf",
 };
@@ -75,8 +72,8 @@ export const CASE_FILES: CaseFile[] = [
     learned:
       "An honest metric beats an impressive one. Top-3 hit-rate under walk-forward validation tells the truth; a shuffled split just tells you what you want to hear.",
     links: {
-      source: "https://github.com/mithilbatra/pit-wall", // TODO: real repo URL
-      live: "https://pit-wall.example.com", // TODO: real deployed URL
+      source: "https://github.com/Mithilbatra/F1_ML_project",
+      live: "http://mithil-f1-pitwall.duckdns.org",
     },
   },
   {
@@ -103,7 +100,7 @@ export const CASE_FILES: CaseFile[] = [
     learned:
       "Incident response is a state machine. Model the states explicitly and the UI, the alerts, and the escalation rules all fall out of it cleanly.",
     links: {
-      source: "https://github.com/mithilbatra/resolvr", // TODO: real repo URL
+      source: "https://github.com/Mithilbatra/Resolvr---An-Issue-Tracker-Incident-Escalation-System",
     },
   },
   {
@@ -129,7 +126,7 @@ export const CASE_FILES: CaseFile[] = [
     learned:
       "A model is only as good as the structure around it. Constrain generation and grading with clear schemas and role context and the quality jumps.",
     links: {
-      source: "https://github.com/mithilbatra/ai-mock-interview", // TODO: real repo URL
+      source: "https://github.com/Mithilbatra/automated_ai_interviewer",
     },
   },
 ];
