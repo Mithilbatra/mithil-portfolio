@@ -28,6 +28,7 @@ const config: Config = {
         ok: "var(--ok)",
         warn: "var(--warn)",
         crit: "var(--crit)",
+        "crit-bright": "var(--crit-bright)",
         info: "var(--info)",
       },
       fontFamily: {

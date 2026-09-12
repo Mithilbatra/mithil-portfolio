@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { CaseFile as CaseFileType } from "@/lib/data";
+import type { CaseFile as CaseFileType, Level } from "@/lib/data";
 import StatusChip from "./ui/StatusChip";
+import SevBadge from "./ui/SevBadge";
+import LogLine from "./ui/LogLine";
+import LevelBadge from "./ui/LevelBadge";
 import { ChevronDown, GitHub, ExternalLink } from "./ui/Icons";
 
 function Block({ label, children }: { label: string; children: React.ReactNode }) {
@@ -20,6 +23,7 @@ function Block({ label, children }: { label: string; children: React.ReactNode }
 export default function CaseFile({ item, defaultOpen = false }: { item: CaseFileType; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const panelId = `case-${item.id}-body`;
+  const symptomLevel: Level = item.severity === 1 ? "ERROR" : "WARN";
 
   return (
     <article
@@ -34,14 +38,27 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
         aria-controls={panelId}
         className="flex w-full items-start gap-4 px-5 py-5 text-left sm:px-7 sm:py-6"
       >
-        <span className="mt-1 font-mono text-sm text-faint">CASE {item.id}</span>
+        <span className="mt-1 font-mono text-sm text-faint">
+          CASE
+          <br className="hidden sm:block" />
+          <span className="text-dim"> {item.id}</span>
+        </span>
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <h3 className="text-xl font-semibold text-ink sm:text-2xl">{item.title}</h3>
+            <SevBadge severity={item.severity} />
             <StatusChip status={item.status} />
             <span className="font-mono text-xs text-faint">{item.year}</span>
           </span>
           <span className="mt-1.5 block text-sm text-dim">{item.subtitle}</span>
+
+          {/* Symptom — a one-line log teaser of what went wrong */}
+          <span className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 font-mono text-[12.5px]">
+            <LevelBadge level={symptomLevel} />
+            <span className="text-faint">symptom</span>
+            <span className="text-dim">{item.symptom}</span>
+          </span>
+
           <span className="mt-3 flex flex-wrap gap-1.5">
             {item.stack.map((s) => (
               <span key={s} className="chip">
@@ -67,8 +84,23 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
       >
         <div className="overflow-hidden">
           <div className="space-y-6 border-t border-line px-5 py-6 sm:px-7 sm:py-7">
+            {/* incident meta line */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+              <span>
+                incident <span className="text-dim">#{item.id}</span>
+              </span>
+              <span className="text-line-strong">·</span>
+              <span>
+                class <span className="text-dim">{item.category}</span>
+              </span>
+              <span className="text-line-strong">·</span>
+              <span>
+                status <span className="text-ok">resolved</span>
+              </span>
+            </div>
+
             {item.note ? (
-              <div className="rounded-md border border-accent-dim/60 bg-accent/[0.06] px-4 py-3 font-mono text-[13px] text-accent">
+              <div className="rounded-md border-l-2 border-accent bg-accent/[0.06] px-4 py-3 font-mono text-[13px] text-accent">
                 ⚑ {item.note}
               </div>
             ) : null}
@@ -76,23 +108,34 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
             <Block label="the problem">{item.problem}</Block>
             <Block label="the approach">{item.approach}</Block>
 
+            {/* Architecture as a log */}
             <div>
               <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
-                <span className="text-faint">{">"} </span>architecture
+                <span className="text-faint">{">"} </span>architecture.log
               </div>
-              <ul className="mt-3 space-y-2">
+              <div className="mt-3 rounded-md border border-line bg-surface/60 py-2">
                 {item.architecture.map((a, i) => (
-                  <li key={i} className="flex gap-3 text-[15px] leading-relaxed text-dim">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-dim" />
-                    <span>{a}</span>
-                  </li>
+                  <LogLine key={i} n={i + 1} level="INFO" emoji={false}>
+                    {a}
+                  </LogLine>
                 ))}
-              </ul>
+              </div>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Block label="the hard part">{item.hardPart}</Block>
-              <Block label="what i learned">{item.learned}</Block>
+            {/* Root cause + resolution — post-mortem */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-md border-l-2 border-crit bg-crit/[0.06] px-4 py-3.5">
+                <div className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-crit">
+                  <span aria-hidden>🔴</span> error · root cause
+                </div>
+                <p className="mt-2 text-[14.5px] leading-relaxed text-dim">{item.hardPart}</p>
+              </div>
+              <div className="rounded-md border-l-2 border-ok bg-ok/[0.06] px-4 py-3.5">
+                <div className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ok">
+                  <span aria-hidden>🟢</span> info · resolution
+                </div>
+                <p className="mt-2 text-[14.5px] leading-relaxed text-dim">{item.learned}</p>
+              </div>
             </div>
 
             {/* links */}

@@ -30,11 +30,12 @@
   --accent: #5de9a0;
   --accent-dim: #1f6f4d;
 
-  /* Status semantics */
-  --ok: #46d48a;
-  --warn: #f5b14c;
-  --crit: #ff6b6b;
-  --info: #56c7f0;
+  /* Status semantics / log levels */
+  --ok: #46d48a;      /* INFO  🟢 */
+  --warn: #f5b14c;    /* WARN  🟡 */
+  --crit: #ff6b6b;    /* ERROR 🔴 */
+  --crit-bright: #ff4757; /* CRIT 🚨 */
+  --info: #56c7f0;    /* DEBUG 🔵 */
 
   color-scheme: dark;
 }
@@ -128,6 +129,73 @@ body {
   }
   .link-underline:hover { background-size: 100% 1px; color: var(--accent); }
 }
+
+/* ── Log viewer: rows, gutter, levels, texture ───────────────── */
+
+/* A single log row. LogLine renders columns with flex; this adds the
+   line-viewer hover + a persistent highlight for higher-severity rows. */
+.logrow {
+  position: relative;
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 3px 10px 3px 8px;
+  border-left: 2px solid transparent;
+  border-radius: 4px;
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+.logrow:hover { background: rgba(255, 255, 255, 0.035); border-left-color: var(--line-strong); }
+.logrow.lvl-INFO:hover { border-left-color: var(--ok); }
+.logrow.lvl-WARN:hover { border-left-color: var(--warn); }
+.logrow.lvl-ERROR:hover { border-left-color: var(--crit); }
+/* CRIT rows are always highlighted — priority made visible */
+.logrow.lvl-CRIT {
+  background: rgba(255, 71, 87, 0.07);
+  border-left-color: rgba(255, 71, 87, 0.55);
+}
+.logrow.lvl-CRIT:hover { background: rgba(255, 71, 87, 0.12); border-left-color: var(--crit-bright); }
+.logrow.lvl-WARN { background: rgba(245, 177, 76, 0.045); }
+
+/* Line-number gutter */
+.gutter {
+  flex: none;
+  width: 2.4ch;
+  text-align: right;
+  color: var(--text-faint);
+  opacity: 0.55;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Faint CRT scanlines — subtle texture so surfaces don't read as flat */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.022) 0px,
+    rgba(255, 255, 255, 0.022) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+  border-radius: inherit;
+}
+
+/* Pulsing critical glyph / recording dot */
+.crit-glow { animation: crit-pulse 1.5s ease-in-out infinite; }
+.rec-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--crit-bright);
+  box-shadow: 0 0 8px 0 rgba(255, 71, 87, 0.7);
+  animation: crit-pulse 1.2s ease-in-out infinite;
+}
+@keyframes crit-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
 /* Scroll reveal — driven by IntersectionObserver adding .in-view */
 .reveal {

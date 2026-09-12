@@ -1,11 +1,12 @@
-import { ACHIEVEMENTS, EDUCATION, COURSEWORK } from "@/lib/data";
+import { ACHIEVEMENTS, EDUCATION, COURSEWORK, type Level } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
+import LogLine from "./ui/LogLine";
 
-const KIND_TAG: Record<string, string> = {
-  award: "AWARD",
-  competition: "COMP",
-  leadership: "LEAD",
+const KIND: Record<string, { level: Level; source: string }> = {
+  award: { level: "INFO", source: "award" },
+  competition: { level: "DEBUG", source: "contest" },
+  leadership: { level: "INFO", source: "leadership" },
 };
 
 export default function Telemetry() {
@@ -20,25 +21,23 @@ export default function Telemetry() {
         />
 
         <div className="grid gap-4 lg:grid-cols-2">
-          {/* Signals / achievements */}
+          {/* Signals / achievements as a log */}
           <Reveal className="lg:row-span-2">
-            <div className="panel h-full px-5 py-5 sm:px-6">
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
-                {">"} signals
+            <div className="panel h-full px-4 py-5 sm:px-5">
+              <div className="mb-3 px-1 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+                {">"} signals.log
               </div>
-              <ul className="divide-y divide-line">
-                {ACHIEVEMENTS.map((a) => (
-                  <li key={a.title} className="flex items-start gap-3 py-4 first:pt-0 last:pb-0">
-                    <span className="mt-0.5 shrink-0 rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[9px] tracking-[0.12em] text-accent">
-                      {KIND_TAG[a.kind]}
-                    </span>
-                    <span>
-                      <span className="block text-[15px] font-medium text-ink">{a.title}</span>
-                      <span className="mt-0.5 block text-[13px] text-faint">{a.detail}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <div className="rounded-md border border-line bg-surface/60 py-2">
+                {ACHIEVEMENTS.map((a, i) => {
+                  const k = KIND[a.kind];
+                  return (
+                    <LogLine key={a.title} n={i + 1} level={k.level} source={k.source} emoji={false}>
+                      <span className="text-ink">{a.title}</span>{" "}
+                      <span className="text-faint">— {a.detail}</span>
+                    </LogLine>
+                  );
+                })}
+              </div>
             </div>
           </Reveal>
 

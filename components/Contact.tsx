@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PROFILE } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
+import LogLine from "./ui/LogLine";
 import { Mail, GitHub, LinkedIn, LeetCode, Phone, Copy, Check } from "./ui/Icons";
 
 interface Channel {
@@ -91,32 +92,34 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* Recommendation card */}
+          {/* Hiring-signal log — the punchline, as a CRIT entry */}
           <Reveal delay={80} className="lg:col-span-2">
-            <div className="panel-raised flex h-full flex-col justify-between px-6 py-7">
-              <div>
-                <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
-                  investigation complete
-                </div>
-                <div className="mt-4 space-y-2 font-mono text-sm">
-                  <div className="flex items-center gap-2 text-ok">
-                    <span>☑</span> strong fundamentals
-                  </div>
-                  <div className="flex items-center gap-2 text-ok">
-                    <span>☑</span> ships real systems
-                  </div>
-                  <div className="flex items-center gap-2 text-ok">
-                    <span>☑</span> thinks about failure
-                  </div>
-                </div>
+            <div className="panel-raised scanlines relative flex h-full flex-col overflow-hidden">
+              <div className="flex items-center gap-2 border-b border-line-strong bg-surface px-4 py-2.5">
+                <span className="h-3 w-3 rounded-full bg-crit/80" />
+                <span className="h-3 w-3 rounded-full bg-warn/80" />
+                <span className="h-3 w-3 rounded-full bg-ok/80" />
+                <span className="ml-2 font-mono text-[11px] text-faint">hiring-signal.log</span>
+                <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-crit-bright">
+                  <span className="rec-dot" aria-hidden />
+                  rec
+                </span>
               </div>
-              <div className="mt-6 rounded-md border border-accent-dim bg-accent/[0.07] px-4 py-3">
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-                  recommendation
-                </div>
-                <div className="mt-1 font-mono text-[15px] font-medium text-accent">
-                  → proceed to technical interview
-                </div>
+              <div className="flex flex-1 flex-col justify-center gap-0.5 px-1.5 py-4">
+                <LogLine level="INFO" source="audit" emoji={false}>
+                  strong fundamentals <span className="text-ok">✓</span>
+                </LogLine>
+                <LogLine level="INFO" source="audit" emoji={false}>
+                  ships real systems <span className="text-ok">✓</span>
+                </LogLine>
+                <LogLine level="INFO" source="audit" emoji={false}>
+                  thinks about failure <span className="text-ok">✓</span>
+                </LogLine>
+                <LogLine level="CRIT" source="hiring">
+                  <span className="font-semibold text-ink">
+                    recommend=PROCEED → schedule technical interview
+                  </span>
+                </LogLine>
               </div>
             </div>
           </Reveal>

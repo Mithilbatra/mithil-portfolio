@@ -1,5 +1,5 @@
 import { PROFILE, TELEMETRY } from "@/lib/data";
-import BootConsole from "./BootConsole";
+import SystemLog from "./SystemLog";
 import Reveal from "./ui/Reveal";
 import { ArrowDown, Download } from "./ui/Icons";
 
@@ -13,10 +13,15 @@ export default function Hero() {
           {/* Left: identity */}
           <div className="lg:col-span-7">
             <Reveal>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1">
-                <span className="dot" aria-hidden />
-                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-                  system online
+              <div className="mb-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em]">
+                <span className="inline-flex items-center gap-2 text-ok">
+                  <span className="dot" aria-hidden />
+                  operational
+                </span>
+                <span className="text-line-strong">|</span>
+                <span className="text-faint">
+                  <span className="text-crit-bright">0</span> crit ·{" "}
+                  <span className="text-warn">0</span> open incidents
                 </span>
               </div>
             </Reveal>
@@ -71,25 +76,35 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          {/* Right: boot console */}
+          {/* Right: live system log */}
           <div className="lg:col-span-5">
             <Reveal delay={200}>
-              <BootConsole />
+              <SystemLog />
             </Reveal>
           </div>
         </div>
 
-        {/* Telemetry strip */}
+        {/* Telemetry strip — a monitoring readout */}
         <Reveal delay={120} className="mt-16 sm:mt-20">
+          <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+            <span aria-hidden>🟢</span>
+            <span className="text-ok">INFO</span>
+            <span>telemetry</span>
+            <span className="text-dim">snapshot=loaded · 4 metrics</span>
+            <span className="ml-2 hidden h-px flex-1 bg-line sm:block" />
+          </div>
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
             {TELEMETRY.map((m) => (
-              <div key={m.label} className="bg-panel px-5 py-6">
+              <div key={m.label} className="group bg-panel px-5 py-6 transition-colors hover:bg-raised">
                 <div className="font-mono text-2xl font-semibold text-accent sm:text-3xl">
                   {m.value}
                 </div>
-                <div className="mt-1.5 text-sm font-medium text-ink">{m.label}</div>
+                <div className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-ink">
+                  <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
+                  {m.label}
+                </div>
                 {m.detail ? (
-                  <div className="mt-0.5 text-xs text-faint">{m.detail}</div>
+                  <div className="mt-1 font-mono text-[11px] text-faint">{m.detail}</div>
                 ) : null}
               </div>
             ))}
