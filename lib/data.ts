@@ -234,6 +234,13 @@ export const TELEMETRY: Metric[] = [
   { value: "800+", label: "Problems Solved", detail: "Across coding platforms" },
 ];
 
+/** Semester SGPAs — powers the CGPA-trend popup on the hero CGPA stat.
+ *  CGPA at each semester is the running average of the SGPAs up to it,
+ *  which lands at 8.93 after semester 6. */
+export const ACADEMIC = {
+  sgpa: [9, 8.85, 9.6, 9.1, 8, 9.05],
+};
+
 export interface Achievement {
   title: string;
   detail: string;

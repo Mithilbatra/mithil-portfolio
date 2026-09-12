@@ -130,6 +130,9 @@ lib/
   `ambient-pulse` keyframe.
 - **HUD scores / labels:** the `CFG` map in `components/severity/SeverityHUD.tsx`.
 - **3D core look:** `components/HeroViz.tsx` (geometry, particle count, speeds).
+- **CGPA popup:** clicking the hero **CGPA** stat opens an animated trend chart
+  (`components/CgpaChartModal.tsx`). Edit your semester SGPAs in `ACADEMIC.sgpa`
+  (`lib/data.ts`) — the cumulative CGPA line is computed from them.
 
 ## 🎨 Design system
 
