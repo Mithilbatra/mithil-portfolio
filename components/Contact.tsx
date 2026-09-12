@@ -5,6 +5,7 @@ import { PROFILE } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
 import LogLine from "./ui/LogLine";
+import { useSeverityZone } from "./severity/useSeverityZone";
 import { Mail, GitHub, LinkedIn, LeetCode, Phone, Copy, Check } from "./ui/Icons";
 
 interface Channel {
@@ -17,6 +18,7 @@ interface Channel {
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
+  const hiringZone = useSeverityZone<HTMLDivElement>("crit", "Hiring signal");
 
   const copyEmail = async () => {
     try {
@@ -94,7 +96,12 @@ export default function Contact() {
 
           {/* Hiring-signal log — the punchline, as a CRIT entry */}
           <Reveal delay={80} className="lg:col-span-2">
-            <div className="panel-raised scanlines relative flex h-full flex-col overflow-hidden">
+            <div
+              ref={hiringZone.ref}
+              onPointerEnter={hiringZone.onPointerEnter}
+              onPointerLeave={hiringZone.onPointerLeave}
+              className="panel-raised scanlines relative flex h-full flex-col overflow-hidden"
+            >
               <div className="flex items-center gap-2 border-b border-line-strong bg-surface px-4 py-2.5">
                 <span className="h-3 w-3 rounded-full bg-crit/80" />
                 <span className="h-3 w-3 rounded-full bg-warn/80" />

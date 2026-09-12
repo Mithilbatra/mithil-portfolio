@@ -6,10 +6,11 @@ import Systems from "@/components/Systems";
 import Telemetry from "@/components/Telemetry";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import SeverityProvider from "@/components/severity/SeverityProvider";
 
 export default function Home() {
   return (
-    <>
+    <SeverityProvider>
       <StatusBar />
       <main>
         <Hero />
@@ -20,6 +21,6 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-    </>
+    </SeverityProvider>
   );
 }

@@ -6,6 +6,7 @@ import StatusChip from "./ui/StatusChip";
 import SevBadge from "./ui/SevBadge";
 import LogLine from "./ui/LogLine";
 import LevelBadge from "./ui/LevelBadge";
+import { useSeverityZone } from "./severity/useSeverityZone";
 import { ChevronDown, GitHub, ExternalLink } from "./ui/Icons";
 
 function Block({ label, children }: { label: string; children: React.ReactNode }) {
@@ -24,9 +25,14 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
   const [open, setOpen] = useState(defaultOpen);
   const panelId = `case-${item.id}-body`;
   const symptomLevel: Level = item.severity === 1 ? "ERROR" : "WARN";
+  const zoneSev = item.severity === 1 ? "crit" : item.severity === 2 ? "warn" : "ok";
+  const zone = useSeverityZone<HTMLElement>(zoneSev, `${item.title} · SEV-${item.severity}`);
 
   return (
     <article
+      ref={zone.ref}
+      onPointerEnter={zone.onPointerEnter}
+      onPointerLeave={zone.onPointerLeave}
       className={`group panel overflow-hidden transition-colors duration-300 ${
         open ? "border-accent-dim" : "hover:border-line-strong"
       }`}

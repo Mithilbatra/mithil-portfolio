@@ -1,6 +1,7 @@
 import { PROFILE, TELEMETRY } from "@/lib/data";
-import SystemLog from "./SystemLog";
+import HeroViz from "./HeroViz";
 import Reveal from "./ui/Reveal";
+import CountUp from "./ui/CountUp";
 import { ArrowDown, Download } from "./ui/Icons";
 
 export default function Hero() {
@@ -76,10 +77,25 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          {/* Right: live system log */}
+          {/* Right: reactive severity core (three.js) */}
           <div className="lg:col-span-5">
             <Reveal delay={200}>
-              <SystemLog />
+              <div className="panel-raised scanlines relative overflow-hidden shadow-panel">
+                <div className="flex items-center gap-2 border-b border-line-strong bg-surface px-4 py-2.5">
+                  <span className="h-3 w-3 rounded-full bg-crit/80" />
+                  <span className="h-3 w-3 rounded-full bg-warn/80" />
+                  <span className="h-3 w-3 rounded-full bg-ok/80" />
+                  <span className="ml-2 font-mono text-[11px] text-faint">
+                    severity-core <span className="text-dim">// live</span>
+                  </span>
+                </div>
+                <HeroViz />
+                <div className="border-t border-line px-4 py-2.5 text-center font-mono text-[11px] text-faint">
+                  the glow tracks priority — it turns{" "}
+                  <span className="text-warn">amber</span> and{" "}
+                  <span className="text-crit-bright">red</span> as you reach what matters
+                </div>
+              </div>
             </Reveal>
           </div>
         </div>
@@ -96,9 +112,10 @@ export default function Hero() {
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
             {TELEMETRY.map((m) => (
               <div key={m.label} className="group bg-panel px-5 py-6 transition-colors hover:bg-raised">
-                <div className="font-mono text-2xl font-semibold text-accent sm:text-3xl">
-                  {m.value}
-                </div>
+                <CountUp
+                  value={m.value}
+                  className="block font-mono text-2xl font-semibold text-accent sm:text-3xl"
+                />
                 <div className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-ink">
                   <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
                   {m.label}
