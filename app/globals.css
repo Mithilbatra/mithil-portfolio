@@ -244,9 +244,9 @@ body {
   --glow-size: 130px;
   --glow-top: 0.05;
 }
-:root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.10; --glow-size: 130px; --glow-top: 0.05; }
-:root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.30; --glow-size: 190px; --glow-top: 0.12; }
-:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.46; --glow-size: 250px; --glow-top: 0.18; }
+:root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.09; --glow-size: 120px; --glow-top: 0.04; }
+:root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.22; --glow-size: 165px; --glow-top: 0.09; }
+:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.34; --glow-size: 200px; --glow-top: 0.12; }
 
 .ambient-glow {
   position: fixed;
@@ -275,8 +275,9 @@ body {
   opacity: var(--glow-top);
   transition: opacity 0.7s ease;
 }
-:root[data-sev="crit"] .ambient-glow { animation: ambient-pulse 1.6s ease-in-out infinite; }
-@keyframes ambient-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.66; } }
+/* gentle breathing — only on crit, low amplitude so it never distracts */
+:root[data-sev="crit"] .ambient-glow { animation: ambient-pulse 3.4s ease-in-out infinite; }
+@keyframes ambient-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.88; } }
 @keyframes ring-spin { to { transform: rotate(360deg); } }
 
 /* thin top scan-bar that also tracks severity */
@@ -323,6 +324,46 @@ body {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
+
+/* Persistent severity HUD (always visible while scrolling) */
+.sev-hud {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.85rem 0.55rem 0.55rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--hud-color, var(--ok)) 38%, var(--line));
+  background: rgba(9, 11, 15, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 40px -14px rgba(0, 0, 0, 0.7),
+    0 0 26px -12px color-mix(in srgb, var(--hud-color, var(--ok)) 70%, transparent);
+  pointer-events: none;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+  animation: hud-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s backwards;
+}
+@keyframes hud-in {
+  from { opacity: 0; transform: translateY(22px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.hud-ring { position: relative; width: 44px; height: 44px; flex: none; }
+.hud-ring svg { display: block; transform: rotate(-90deg); }
+.hud-ring-fill { transition: stroke-dashoffset 0.8s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.5s ease; }
+.hud-score {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hud-color, var(--ok));
+}
+.hud-meta { display: flex; flex-direction: column; gap: 1px; line-height: 1.2; }
+@media (max-width: 640px) { .sev-hud { display: none; } }
 
 /* three.js canvas mount */
 .hero-viz {

@@ -2,6 +2,7 @@ import { PROFILE, TELEMETRY } from "@/lib/data";
 import HeroViz from "./HeroViz";
 import Reveal from "./ui/Reveal";
 import CountUp from "./ui/CountUp";
+import ScrambleText from "./ui/ScrambleText";
 import { ArrowDown, Download } from "./ui/Icons";
 
 export default function Hero() {
@@ -37,8 +38,11 @@ export default function Hero() {
 
             <Reveal delay={120}>
               <p className="mt-5 font-mono text-sm text-dim">
-                <span className="text-accent">{"//"}</span> {PROFILE.role} ·{" "}
-                {PROFILE.focus.join(" · ")}
+                <span className="text-accent">{"//"}</span>{" "}
+                <ScrambleText
+                  text={`${PROFILE.role} · ${PROFILE.focus.join(" · ")}`}
+                  delay={500}
+                />
               </p>
             </Reveal>
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import anime from "animejs";
 import { useSeverity } from "./SeverityProvider";
 
 function Triangle({ color }: { color: string }) {
@@ -18,14 +20,26 @@ function Triangle({ color }: { color: string }) {
   );
 }
 
-/** Fixed pill that drops in when the page severity is warn/crit — a red (or
- *  amber) warning triangle naming what's being showcased. CSS-driven so it can
- *  never get stuck between rapid severity changes. */
+/** Fixed pill that drops in when severity is warn/crit. Visibility is
+ *  CSS-driven (never sticks); anime.js adds a shake/pop when it escalates. */
 export default function CriticalIndicator() {
   const { level, label } = useSeverity();
+  const iconRef = useRef<HTMLSpanElement>(null);
   const visible = level !== "ok";
   const color = level === "crit" ? "var(--crit-bright)" : "var(--warn)";
   const title = level === "crit" ? "CRITICAL" : "WARNING";
+
+  useEffect(() => {
+    const el = iconRef.current;
+    if (!el) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    anime.remove(el);
+    if (level === "crit") {
+      anime({ targets: el, translateX: [0, -2.5, 2.5, -2, 2, 0], duration: 540, easing: "easeInOutSine" });
+    } else if (level === "warn") {
+      anime({ targets: el, scale: [0.55, 1], duration: 440, easing: "easeOutBack" });
+    }
+  }, [level]);
 
   return (
     <div className="ci-wrap">
@@ -35,7 +49,9 @@ export default function CriticalIndicator() {
         role="status"
         aria-live="polite"
       >
-        <Triangle color={color} />
+        <span ref={iconRef} className="inline-flex">
+          <Triangle color={color} />
+        </span>
         <span
           className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em]"
           style={{ color }}

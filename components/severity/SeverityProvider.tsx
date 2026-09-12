@@ -11,6 +11,7 @@ import {
 } from "react";
 import AmbientGlow from "./AmbientGlow";
 import CriticalIndicator from "./CriticalIndicator";
+import SeverityHUD from "./SeverityHUD";
 
 export type Sev = "ok" | "warn" | "crit";
 
@@ -85,6 +86,7 @@ export default function SeverityProvider({ children }: { children: ReactNode }) 
       {children}
       <AmbientGlow />
       <CriticalIndicator />
+      <SeverityHUD />
     </SeverityContext.Provider>
   );
 }
