@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CASE_FILES } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
@@ -36,9 +36,14 @@ function Bars({ pings }: { pings: Ping[] }) {
 /** Real health checks, polled every 30s while the tab is visible. */
 export default function StatusPage() {
   const [history, setHistory] = useState<Record<string, Ping[]>>({});
+  const [checkedAt, setCheckedAt] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
+  // Poll only while the section is on (or near) screen, at most once per 10s.
   useEffect(() => {
     let alive = true;
+    let near = false;
+    let lastAt = 0;
     const push = (latest: Record<string, Ping>) =>
       setHistory((h) => {
         const next = { ...h };
@@ -46,12 +51,14 @@ export default function StatusPage() {
         return next;
       });
     const poll = async () => {
-      if (document.hidden) return;
+      if (!near || document.hidden || Date.now() - lastAt < 10_000) return;
+      lastAt = Date.now();
       const t0 = performance.now();
       try {
-        const r = await fetch("/api/status", { cache: "no-store" });
+        const r = await fetch("/api/status", { cache: "no-store", signal: AbortSignal.timeout(10_000) });
         const d = (await r.json()) as Record<string, Ping>;
         if (!alive) return;
+        setCheckedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
         // checks run in parallel, so the slowest one bounds the wait; the rest is this site
         const slowest = Math.max(0, ...Object.values(d).map((p) => p.ms ?? 0));
         push({ ...d, [SITE]: { ok: r.ok, ms: Math.max(1, Math.round(performance.now() - t0) - slowest) } });
@@ -59,11 +66,19 @@ export default function StatusPage() {
         if (alive) push({ [SITE]: { ok: false, ms: null } });
       }
     };
-    poll();
+    const io = new IntersectionObserver(
+      ([e]) => {
+        near = e.isIntersecting;
+        poll();
+      },
+      { rootMargin: "300px 0px" }
+    );
+    if (sectionRef.current) io.observe(sectionRef.current);
     const id = setInterval(poll, POLL_MS);
     return () => {
       alive = false;
       clearInterval(id);
+      io.disconnect();
     };
   }, []);
 
@@ -78,7 +93,7 @@ export default function StatusPage() {
   ];
 
   return (
-    <section id="status" className="scroll-mt-24 py-20 sm:py-28">
+    <section ref={sectionRef} id="status" className="scroll-mt-24 py-20 sm:py-28">
       <div className="shell">
         <SectionHeader
           index="04"
@@ -96,7 +111,9 @@ export default function StatusPage() {
               <span className="text-[15px] font-semibold text-ink">
                 {!checked ? "Running checks…" : down.length ? `Degraded · ${down.join(", ")}` : "All systems operational"}
               </span>
-              <span className="ml-auto font-mono text-[11px] text-faint">poll 30s · this visit</span>
+              <span className="ml-auto font-mono text-[11px] text-faint" aria-live="polite">
+                {checkedAt ? `last check ${checkedAt} · every 30s` : "checks every 30s while you're here"}
+              </span>
             </div>
 
             <ul className="divide-y divide-line">

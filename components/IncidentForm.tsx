@@ -52,7 +52,7 @@ export default function IncidentForm() {
           onClick={() => window.dispatchEvent(new CustomEvent("console:open", { detail: { input: "page " } }))}
           className="ml-auto font-mono text-[11px] text-faint transition-colors hover:text-accent"
         >
-          or 📟 page on-call (⌘K) →
+          or 📟 page on-call (⌘K / Ctrl K) →
         </button>
       </div>
 

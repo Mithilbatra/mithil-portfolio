@@ -7,7 +7,7 @@ const description =
   "Mithil Batra — Software Engineer. CSE @ NIT Delhi, SWE intern @ HSBC. A portfolio built like an incident console: projects as case files, honest engineering, real systems.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mithil-portfolio-three.vercel.app"), // swap for mithil.me once it's connected
+  metadataBase: new URL("https://www.mithil.me"),
   title,
   description,
   keywords: [

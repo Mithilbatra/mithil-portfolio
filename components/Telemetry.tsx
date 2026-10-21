@@ -1,13 +1,6 @@
-import { ACHIEVEMENTS, EDUCATION, COURSEWORK, type Level } from "@/lib/data";
+import { ACHIEVEMENTS, EDUCATION, COURSEWORK } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
-import LogLine from "./ui/LogLine";
-
-const KIND: Record<string, { level: Level; source: string }> = {
-  award: { level: "INFO", source: "award" },
-  competition: { level: "DEBUG", source: "contest" },
-  leadership: { level: "INFO", source: "leadership" },
-};
 
 export default function Telemetry() {
   return (
@@ -25,19 +18,19 @@ export default function Telemetry() {
           <Reveal className="lg:row-span-2">
             <div className="panel h-full px-4 py-5 sm:px-5">
               <div className="mb-3 px-1 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
-                {">"} signals.log
+                {">"} awards &amp; leadership
               </div>
-              <div className="rounded-md border border-line bg-surface/60 py-2">
-                {ACHIEVEMENTS.map((a, i) => {
-                  const k = KIND[a.kind];
-                  return (
-                    <LogLine key={a.title} n={i + 1} level={k.level} source={k.source} emoji={false}>
-                      <span className="text-ink">{a.title}</span>{" "}
-                      <span className="text-faint">— {a.detail}</span>
-                    </LogLine>
-                  );
-                })}
-              </div>
+              <ul className="divide-y divide-line px-1">
+                {ACHIEVEMENTS.map((a) => (
+                  <li key={a.title} className="flex items-baseline justify-between gap-3 py-3">
+                    <span>
+                      <span className="block text-[15px] text-ink">{a.title}</span>
+                      <span className="text-[13px] text-faint">{a.detail}</span>
+                    </span>
+                    <span className="flex-none font-mono text-[10px] uppercase tracking-[0.14em] text-faint">{a.kind}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
 

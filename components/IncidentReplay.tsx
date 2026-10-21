@@ -14,7 +14,7 @@ const INC = "INC-0042";
 // Resolvr's own palette + status names (resolvr-expo IncidentsScreen)
 const NAVY = "#2c3e50";
 const STATUS: Record<Exclude<State, "idle">, { label: string; color: string }> = {
-  triggered: { label: "TRIGGERED", color: "#f39c12" },
+  triggered: { label: "ACTIVE", color: "#f39c12" }, // the backend's Incident.status enum calls this "active"
   escalated: { label: "ESCALATED", color: "#e74c3c" },
   acked: { label: "ACKNOWLEDGED", color: "#3498db" },
   resolved: { label: "RESOLVED", color: "#27ae60" },
@@ -180,6 +180,28 @@ export default function IncidentReplay() {
           Resolvr ships as a React Native app that runs in Expo Go, so here&apos;s a faithful replica of its on-call
           flow running right in your browser — same statuses, same escalation rules. Trigger an alert, then
           acknowledge it before it escalates.
+        </p>
+
+        {/* escalation logic, lit up as the replay moves through it */}
+        <ol className="mt-4 flex flex-wrap items-center gap-1.5 font-mono text-[11px]" aria-label="Escalation states">
+          {(["triggered", "escalated", "acked", "resolved"] as const).map((st, i) => (
+            <li key={st} className="flex items-center gap-1.5">
+              {i > 0 ? <span className="text-faint">{i === 1 ? "—6s, no ack→" : "→"}</span> : null}
+              <span
+                className="rounded border px-2 py-0.5"
+                style={
+                  state === st
+                    ? { color: STATUS[st].color, borderColor: STATUS[st].color, background: `${STATUS[st].color}1f` }
+                    : { color: "var(--text-faint)", borderColor: "var(--line)" }
+                }
+              >
+                {STATUS[st].label.toLowerCase()}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-1.5 font-mono text-[11px] text-faint">
+          acknowledging while active skips escalation · transitions unit-tested (lib/incident.test.mjs)
         </p>
         <div className="mt-4 rounded-md border border-line bg-bg/60 py-1.5" aria-live="polite">
           {log.length ? (

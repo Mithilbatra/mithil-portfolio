@@ -1,4 +1,6 @@
-import { PROFILE } from "@/lib/data";
+import { CASE_FILES, PROFILE } from "@/lib/data";
+
+const featured = CASE_FILES[0];
 import TelemetryStrip from "./TelemetryStrip";
 import Reveal from "./ui/Reveal";
 import { ArrowDown, Download } from "./ui/Icons";
@@ -48,7 +50,7 @@ export default function Hero() {
                   href="#log"
                   className="group inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 font-mono text-sm font-medium text-[#04140c] transition-transform hover:-translate-y-0.5"
                 >
-                  open engineering log
+                  explore projects
                   <ArrowDown
                     width={16}
                     height={16}
@@ -65,6 +67,14 @@ export default function Hero() {
                   download resume
                 </a>
               </div>
+              {/* strongest project + its measured result, one click from the first screen */}
+              <a
+                href={`/incidents/${featured.slug}`}
+                className="mt-5 block max-w-xl rounded-md border border-line bg-surface/70 px-3.5 py-2.5 font-mono text-[12px] transition-colors hover:border-accent-dim"
+              >
+                <span className="text-accent">★ start here</span> <span className="text-ink">{featured.title} →</span>
+                <span className="mt-0.5 block text-dim">{featured.result}</span>
+              </a>
             </Reveal>
           </div>
 
@@ -78,10 +88,7 @@ export default function Hero() {
         {/* Telemetry strip — a monitoring readout */}
         <Reveal delay={120} className="mt-16 sm:mt-20">
           <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-            <span aria-hidden>🟢</span>
-            <span className="text-ok">INFO</span>
-            <span>telemetry</span>
-            <span className="text-dim">snapshot=loaded · 4 metrics</span>
+            <span>at a glance</span>
             <span className="ml-2 hidden h-px flex-1 bg-line sm:block" />
           </div>
           <TelemetryStrip />

@@ -62,6 +62,11 @@ export interface CaseFile {
   learned: string;
   note?: string; // optional flavour line
   evidence?: { src: string; caption: string }; // screenshot in public/evidence/
+  role?: string; // what I personally did
+  result?: string; // one-line headline, shown on the collapsed card
+  results?: { label: string; value: string; detail: string }[]; // measured + reproducible only
+  resultsNote?: string; // where the numbers come from
+  limitations?: string;
   links: { source?: string; live?: string };
 }
 
@@ -77,8 +82,18 @@ export const CASE_FILES: CaseFile[] = [
     symptom: "podium predictions looked great — because the model was cheating on time",
     evidence: {
       src: "/evidence/pit-wall.jpg",
-      caption: "live dashboard · 2026 season · 369 race entries analysed",
+      caption: "live dashboard · now tracking the 2026 season",
     },
+    role: "Solo — designed the feature pipeline, trained and evaluated the models, built the dashboard and deployed it with Docker on a cloud VM.",
+    result: "72.2% top-3 podium hit-rate on held-out races, vs 66.7% for the qualifying-grid baseline",
+    results: [
+      { label: "held-out top-3 hit-rate", value: "72.2%", detail: "gradient boosting · 6 races (2026 R12–R17)" },
+      { label: "qualifying-grid baseline", value: "66.7%", detail: "pick the top-3 qualifiers · same races" },
+      { label: "walk-forward · 2025", value: "75.0% vs 75.0%", detail: "random forest vs baseline · 24 races" },
+      { label: "walk-forward · 2026", value: "56.9% vs 60.8%", detail: "random forest vs baseline · 17 races" },
+    ],
+    resultsNote:
+      "Measured by the deployed app (/api/model, /api/backtest), last retrained 21 Oct 2026. The grid is a hard baseline — the season backtests show where the model still loses to it.",
     year: "2025",
     stack: ["Python", "Flask", "scikit-learn", "Pandas", "FastF1", "Docker", "REST APIs"],
     problem:
@@ -105,23 +120,25 @@ export const CASE_FILES: CaseFile[] = [
     id: "002",
     slug: "resolvr",
     title: "Resolvr",
-    subtitle: "Incident Management & Real-Time Alerting",
+    subtitle: "Mobile Issue Tracker & Incident Escalation",
     status: "SHIPPED",
     severity: 1,
     category: "availability · on-call",
     symptom: "a service breaks and the signal is scattered — nobody owns the page",
+    result: "Raise → escalate → acknowledge → resolve — playable in your browser below, no Expo Go needed",
     year: "2025",
-    stack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Node.js", "REST APIs"],
+    stack: ["React Native", "Expo", "Node.js", "Express", "MongoDB", "Socket.IO", "Firebase push"],
     note: "The console you're reading is styled like an incident dashboard. Resolvr is the real one.",
     problem:
       "When a service breaks, teams bleed time to scattered signals — no single place to track the issue, page the right person, and actually drive it to resolution.",
     approach:
-      "Put issue tracking and real-time alerting in one full-stack app, modelled around how incidents actually move: open → acknowledge → escalate → resolve.",
+      "A React Native (Expo) mobile app on an Express + MongoDB API, modelled around how incidents actually move: active → escalated → acknowledged → resolved.",
     architecture: [
-      "Kanban incident board with manual and webhook / API-based creation",
-      "On-call scheduling and configurable escalation policies",
-      "Automated multi-channel notification system",
-      "Incident timeline + runbook integration for structured resolution",
+      "Expo (React Native) client — issues, incidents, projects and notifications",
+      "Express REST API, with Socket.IO pushing live incident updates to every client",
+      "MongoDB (Mongoose) stores each incident's escalation chain, current level and next-escalation time",
+      "Raising an incident starts an escalation timer; unacknowledged incidents climb the chain",
+      "Firebase Cloud Messaging push notifications reach the on-call engineer's phone",
     ],
     hardPart:
       "Escalation logic — deciding who gets paged, when, and how it climbs if no one acknowledges, all without spamming the whole team on every alert.",
@@ -140,17 +157,22 @@ export const CASE_FILES: CaseFile[] = [
     severity: 3,
     category: "feedback quality",
     symptom: "interview practice gave feedback too vague to actually act on",
+    role: "Solo — built the interview flow, the Gemini prompts and the database layer, and deployed it on Vercel.",
+    result: "Every spoken answer comes back as structured JSON — a rating plus 3–5 lines of specific feedback",
+    limitations:
+      "Ratings come from a single Gemini call without a fixed rubric, so the same answer can score differently between runs. Next step: a rubric in the prompt and averaging across several calls.",
     year: "2024",
-    stack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Google Gemini API"],
+    stack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Drizzle ORM", "Google Gemini API", "Clerk"],
     problem:
       "Interview prep is mostly static question banks — no questions tailored to your role, and no feedback until a mentor has time for you.",
     approach:
       "Simulate a real interview: generate role-based questions with an LLM, evaluate the answers, and hand back specific, instant feedback — no mentor required.",
     architecture: [
-      "Role-based question selection drives prompt construction",
-      "Google Gemini generates questions and grades responses",
-      "PostgreSQL persists sessions, answers, and feedback history",
-      "Next.js front end for the interview flow",
+      "Clerk sign-in → pick a role, tech stack and experience level",
+      "Gemini generates role-specific interview questions as JSON",
+      "Answers are spoken — captured with speech-to-text while the webcam runs",
+      "Gemini rates each answer and returns 3–5 lines of feedback as JSON",
+      "PostgreSQL (Drizzle ORM) stores interviews, answers and feedback history",
     ],
     hardPart:
       "Getting the model to produce consistent, useful evaluation instead of vague praise — structuring prompts and schemas so feedback is specific and actionable.",
@@ -335,10 +357,10 @@ export const RUNBOOK: { rule: string; body: string; from: string }[] = [
 ];
 
 export const NAV = [
-  { id: "log", label: "Log" },
-  { id: "deployments", label: "Deployments" },
+  { id: "log", label: "Projects" },
+  { id: "deployments", label: "Experience" },
   { id: "status", label: "Status" },
-  { id: "systems", label: "Systems" },
-  { id: "telemetry", label: "Telemetry" },
+  { id: "systems", label: "Skills" },
+  { id: "telemetry", label: "Achievements" },
   { id: "contact", label: "Contact" },
 ];

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 type Data = {
+  fetchedAt: string;
   race: { event: string; location: string; round: number; utc: string } | null;
   podium: { driver: string; team: string; prob: number }[];
 };
@@ -21,7 +22,7 @@ export default function RaceWidget() {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    fetch("/api/pitwall")
+    fetch("/api/pitwall", { signal: AbortSignal.timeout(25_000) })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
       .catch(() => setFailed(true));
@@ -31,14 +32,29 @@ export default function RaceWidget() {
 
   return (
     <div className="rounded-md border border-line bg-surface/60 p-3 sm:p-4">
-      <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
-        <span className="text-faint">{">"} </span>live from pit-wall · /api/weekend
+      <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
+        <span>
+          <span className="text-faint">{">"} </span>live from pit-wall · /api/weekend
+        </span>
+        {data ? (
+          <span className="normal-case tracking-normal text-faint" suppressHydrationWarning>
+            data as of {new Date(data.fetchedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        ) : null}
       </div>
-      {failed ? (
-        <p className="mt-2 font-mono text-[12.5px] text-warn">telemetry link down — the live app is still one click away below.</p>
-      ) : !data?.race ? (
-        <p className="mt-2 font-mono text-[12.5px] text-faint">fetching race weekend…</p>
-      ) : (
+      <div aria-live="polite">
+        {failed ? (
+          <p className="mt-2 font-mono text-[12.5px] text-warn">
+            Couldn&apos;t reach the Pit Wall server just now — the screenshot above shows the live dashboard, and the
+            demo link below still works when it&apos;s up.
+          </p>
+        ) : !data ? (
+          <p className="mt-2 font-mono text-[12.5px] text-faint">loading the next race weekend…</p>
+        ) : !data.race ? (
+          <p className="mt-2 font-mono text-[12.5px] text-faint">No race weekend scheduled right now — the season is on a break.</p>
+        ) : null}
+      </div>
+      {data?.race ? (
         <div className="mt-3 grid gap-4 sm:grid-cols-[1fr_1.2fr]">
           <div>
             <div className="font-mono text-[11px] text-faint">
@@ -67,7 +83,7 @@ export default function RaceWidget() {
             ))}
           </ol>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

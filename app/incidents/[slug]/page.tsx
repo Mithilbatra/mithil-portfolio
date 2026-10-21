@@ -31,7 +31,7 @@ export default function IncidentPage({ params }: Props) {
           ← cd ../engineering-log
         </a>
         <h1 className="mb-6 mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
-          incident report · INC-{c.id} · {c.title}
+          case study · INC-{c.id} · {c.title}
         </h1>
         <CaseFile item={c} defaultOpen />
       </main>

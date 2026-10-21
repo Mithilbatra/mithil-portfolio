@@ -10,9 +10,11 @@ export default function StatusBar() {
   const [active, setActive] = useState<string>("");
   const [clock, setClock] = useState<string>("--:--:--");
   const [mounted, setMounted] = useState(false);
+  const [mod, setMod] = useState("⌘");
 
   useEffect(() => {
     setMounted(true);
+    if (!/Mac|iPhone|iPad/.test(navigator.platform)) setMod("Ctrl ");
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -110,7 +112,7 @@ export default function StatusBar() {
             className="hidden items-center gap-1 rounded-md border border-line px-2 py-1.5 font-mono text-[11px] text-faint transition-colors hover:border-accent-dim hover:text-accent sm:inline-flex"
             aria-label="Open command console"
           >
-            ⌘K
+            {mod}K
           </button>
           <a
             href={PROFILE.resumePath}

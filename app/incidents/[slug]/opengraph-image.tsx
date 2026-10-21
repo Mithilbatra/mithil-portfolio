@@ -12,7 +12,7 @@ export default function Image({ params }: { params: { slug: string } }) {
   const c = CASE_FILES.find((x) => x.slug === params.slug) ?? CASE_FILES[0];
   const [color, tag] = SEV[c.severity];
   return ogCard({
-    kicker: `INCIDENT REPORT · INC-${c.id}`,
+    kicker: `CASE STUDY · INC-${c.id}`,
     title: c.title,
     subtitle: c.symptom,
     tag,
