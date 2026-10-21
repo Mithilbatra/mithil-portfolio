@@ -243,9 +243,9 @@ body {
   --glow-size: 130px;
   --glow-top: 0.05;
 }
-:root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.09; --glow-size: 120px; --glow-top: 0.04; }
-:root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.16; --glow-size: 150px; --glow-top: 0.07; }
-:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.24; --glow-size: 170px; --glow-top: 0.09; }
+:root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.07; --glow-size: 110px; --glow-top: 0.03; }
+:root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.12; --glow-size: 135px; --glow-top: 0.05; }
+:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.18; --glow-size: 150px; --glow-top: 0.07; }
 
 .ambient-glow {
   position: fixed;
@@ -316,7 +316,7 @@ body {
   border-radius: 999px;
   background: radial-gradient(circle, rgba(9, 11, 15, 0.94) 58%, rgba(9, 11, 15, 0.7));
   border: 1px solid color-mix(in srgb, var(--hud-color) 45%, var(--line));
-  box-shadow: 0 0 30px -10px var(--hud-color);
+  box-shadow: 0 0 18px -8px var(--hud-color);
   transition: border-color 0.5s ease, box-shadow 0.5s ease;
 }
 .core-hud:hover .core-hud-disc,

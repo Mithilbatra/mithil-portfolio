@@ -52,8 +52,9 @@ export default function SeverityCore() {
     const place = () => {
       raf = 0;
       const d = dockSize();
-      const dx = window.innerWidth - MARGIN - d;
-      const dy = window.innerHeight - MARGIN - d;
+      // clientWidth excludes the scrollbar, matching how CSS `right:` places the dock disc
+      const dx = document.documentElement.clientWidth - MARGIN - d;
+      const dy = document.documentElement.clientHeight - MARGIN - d;
       const slot = document.getElementById("core-slot");
       let e = 1;
       let x = dx;
@@ -120,12 +121,12 @@ export default function SeverityCore() {
       scene.add(group);
       const ico = new THREE.IcosahedronGeometry(1.4, 1);
       const wireGeo = new THREE.WireframeGeometry(ico);
-      const lineMat = new THREE.LineBasicMaterial({ color: HEX.ok, transparent: true, opacity: 0.85 });
+      const lineMat = new THREE.LineBasicMaterial({ color: HEX.ok, transparent: true, opacity: 0.6 });
       group.add(new THREE.LineSegments(wireGeo, lineMat));
-      const vertMat = new THREE.PointsMaterial({ color: HEX.ok, size: 0.07, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+      const vertMat = new THREE.PointsMaterial({ color: HEX.ok, size: 0.055, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false });
       group.add(new THREE.Points(ico, vertMat));
       const coreGeo = new THREE.IcosahedronGeometry(0.55, 0);
-      const coreMat = new THREE.MeshBasicMaterial({ color: HEX.ok, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending });
+      const coreMat = new THREE.MeshBasicMaterial({ color: HEX.ok, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending });
       group.add(new THREE.Mesh(coreGeo, coreMat));
 
       const N = 1200;
@@ -140,7 +141,7 @@ export default function SeverityCore() {
       }
       const haloGeo = new THREE.BufferGeometry();
       haloGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      const haloMat = new THREE.PointsMaterial({ color: HEX.ok, size: 0.024, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+      const haloMat = new THREE.PointsMaterial({ color: HEX.ok, size: 0.022, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false });
       const halo = new THREE.Points(haloGeo, haloMat);
       scene.add(halo);
 
@@ -167,16 +168,16 @@ export default function SeverityCore() {
 
         // chaos mode (Konami / `chaos` command) spins the core up and blows the halo out
         const chaos = document.documentElement.dataset.chaos === "1";
-        const agitate = chaos ? 9 : lv === "crit" ? 2.2 : lv === "warn" ? 1.5 : 1;
-        group.rotation.y += 0.0016 + 0.0016 * agitate;
-        group.rotation.x += 0.0006 * agitate;
-        halo.rotation.y -= 0.0007 * agitate;
+        const agitate = chaos ? 9 : lv === "crit" ? 1.6 : lv === "warn" ? 1.25 : 1;
+        group.rotation.y += 0.0009 + 0.0009 * agitate;
+        group.rotation.x += 0.0003 * agitate;
+        halo.rotation.y -= 0.0004 * agitate;
         halo.scale.setScalar(halo.scale.x + ((chaos ? 1.9 : 1) - halo.scale.x) * 0.08);
-        group.scale.setScalar(1 + Math.sin(t * (chaos ? 14 : 1.6)) * (chaos ? 0.16 : 0.02));
-        coreMat.opacity = 0.08 + (Math.sin(t * 2) * 0.5 + 0.5) * (lv === "crit" ? 0.22 : 0.1);
+        group.scale.setScalar(1 + Math.sin(t * (chaos ? 14 : 1.2)) * (chaos ? 0.16 : 0.012));
+        coreMat.opacity = 0.05 + (Math.sin(t * 1.5) * 0.5 + 0.5) * (lv === "crit" ? 0.12 : 0.06);
 
-        camera.position.x += (mx * 0.6 - camera.position.x) * 0.04;
-        camera.position.y += (-my * 0.4 - camera.position.y) * 0.04;
+        camera.position.x += (mx * 0.35 - camera.position.x) * 0.03;
+        camera.position.y += (-my * 0.25 - camera.position.y) * 0.03;
         camera.lookAt(0, 0, 0);
         renderer.render(scene, camera);
       };
