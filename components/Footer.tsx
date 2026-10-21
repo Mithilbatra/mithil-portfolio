@@ -58,7 +58,7 @@ export default function Footer() {
           </div>
 
           <div className="font-mono text-[11px] text-faint">
-            built with <span className="text-dim">next.js</span> ·{" "}
+            press <kbd className="text-dim">~</kbd> for a terminal · ↑↑↓↓←→←→BA if you dare ·{" "}
             <a href="#top" className="transition-colors hover:text-accent">
               ↑ back to top
             </a>

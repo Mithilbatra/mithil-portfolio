@@ -8,7 +8,7 @@ export default function Deployments() {
     <section id="deployments" className="scroll-mt-24 py-20 sm:py-28">
       <div className="shell">
         <SectionHeader
-          index="02"
+          index="03"
           command="git log --deployments"
           title="Deployment History"
           blurb="Where the code met production and other people's expectations."
@@ -42,8 +42,23 @@ export default function Deployments() {
 
                   <p className="mt-5 max-w-3xl text-[15px] leading-relaxed text-dim">{d.summary}</p>
 
+                  {/* The internship as a CI/CD run — stages pass in sequence on scroll-in */}
+                  <ol className="mt-5 flex flex-wrap items-center gap-y-2 font-mono text-[12px]" aria-label="Deployment pipeline">
+                    {[...d.stages, "production"].map((s, j) => (
+                      <li key={s} className="flex items-center">
+                        {j > 0 ? <span className="pipe-link" style={{ ["--d" as string]: `${0.2 + j * 0.45}s` }} aria-hidden /> : null}
+                        <span className="pipe-step" style={{ ["--d" as string]: `${0.2 + j * 0.45}s` }}>
+                          <span className="pipe-check" aria-hidden>
+                            {j === d.stages.length ? "▲" : "✓"}
+                          </span>
+                          {s}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+
                   {/* Work as a deploy log */}
-                  <div className="mt-5 rounded-md border border-line bg-surface/60 py-2">
+                  <div className="mt-4 rounded-md border border-line bg-surface/60 py-2">
                     {d.work.map((w, j) => (
                       <LogLine key={j} n={j + 1} level="INFO" source={src} emoji={false}>
                         {w}

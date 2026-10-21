@@ -6,6 +6,7 @@ import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
 import LogLine from "./ui/LogLine";
 import { useSeverityZone } from "./severity/useSeverityZone";
+import IncidentForm from "./IncidentForm";
 import { Mail, GitHub, LinkedIn, LeetCode, Phone, Copy, Check } from "./ui/Icons";
 
 interface Channel {
@@ -42,7 +43,7 @@ export default function Contact() {
     <section id="contact" className="scroll-mt-24 py-20 sm:py-28">
       <div className="shell">
         <SectionHeader
-          index="05"
+          index="07"
           command="./contact --open-channel"
           title="Open a Channel"
           blurb="Hiring, collaborating, or just want to talk shop about systems and F1? Reach out."
@@ -131,6 +132,10 @@ export default function Contact() {
             </div>
           </Reveal>
         </div>
+
+        <Reveal>
+          <IncidentForm />
+        </Reveal>
       </div>
     </section>
   );

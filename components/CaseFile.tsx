@@ -6,7 +6,10 @@ import StatusChip from "./ui/StatusChip";
 import SevBadge from "./ui/SevBadge";
 import LogLine from "./ui/LogLine";
 import LevelBadge from "./ui/LevelBadge";
+import Image from "next/image";
 import { useSeverityZone } from "./severity/useSeverityZone";
+import IncidentReplay from "./IncidentReplay";
+import RaceWidget from "./RaceWidget";
 import { ChevronDown, GitHub, ExternalLink } from "./ui/Icons";
 
 function Block({ label, children }: { label: string; children: React.ReactNode }) {
@@ -114,6 +117,29 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
             <Block label="the problem">{item.problem}</Block>
             <Block label="the approach">{item.approach}</Block>
 
+            {item.evidence ? (
+              <figure className="evidence overflow-hidden rounded-md border border-line bg-bg">
+                <figcaption className="flex items-center gap-2 border-b border-line bg-surface px-3 py-2 font-mono text-[11px] text-faint">
+                  <span className="text-accent">evidence/</span>
+                  {item.evidence.src.split("/").pop()}
+                  <span className="ml-auto hidden text-dim sm:inline">{item.evidence.caption}</span>
+                </figcaption>
+                <div className="evidence-shot relative">
+                  <Image
+                    src={item.evidence.src}
+                    alt={`${item.title} — ${item.evidence.caption}`}
+                    width={1440}
+                    height={900}
+                    sizes="(min-width: 1120px) 1000px, 100vw"
+                    className="h-auto w-full"
+                  />
+                </div>
+              </figure>
+            ) : null}
+
+            {item.slug === "pit-wall" ? <RaceWidget /> : null}
+            {item.slug === "resolvr" ? <IncidentReplay /> : null}
+
             {/* Architecture as a log */}
             <div>
               <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
@@ -166,6 +192,12 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
                   <ExternalLink width={15} height={15} /> live demo
                 </a>
               ) : null}
+              <a
+                href={`/incidents/${item.slug}`}
+                className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 font-mono text-[13px] text-faint transition-colors hover:border-accent-dim hover:text-accent"
+              >
+                # permalink
+              </a>
             </div>
           </div>
         </div>

@@ -2,17 +2,31 @@ import { SKILLS, CERTIFICATIONS } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
 import { Cpu } from "./ui/Icons";
+import SkillGraph from "./SkillGraph";
 
 export default function Systems() {
   return (
     <section id="systems" className="scroll-mt-24 py-20 sm:py-28">
       <div className="shell">
         <SectionHeader
-          index="03"
+          index="05"
           command="systemctl status --capabilities"
           title="Systems & Runtime"
           blurb="The stack I reach for — and a few certifications that back it up."
         />
+
+        {/* Dependency graph: which skill shipped which project (desktop; the grid below covers mobile) */}
+        <Reveal className="mb-10 hidden md:block">
+          <div className="panel px-5 py-5">
+            <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
+              <span>
+                <span className="text-accent">{">"}</span> dependency-graph · skill → shipped in
+              </span>
+              <span className="normal-case tracking-normal">hover or tab through a node</span>
+            </div>
+            <SkillGraph />
+          </div>
+        </Reveal>
 
         {/* Skills grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

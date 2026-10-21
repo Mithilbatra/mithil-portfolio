@@ -410,9 +410,117 @@ body {
   animation: ring-spin 12s linear infinite;
 }
 
+/* ── Spotlight: the panel under the cursor gets a severity-tinted light (Spotlight.tsx sets --mx/--my).
+   Unlayered, so it adds an image layer on top of the layered .panel background colour. */
+.panel, .panel-raised {
+  background-image: radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), rgba(var(--sev-rgb), 0.075), transparent 65%);
+}
+
+/* ── Incident replay (Resolvr demo) ── */
+.replay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.2s, background 0.2s;
+}
+.replay-btn:hover { border-color: currentColor; background: var(--raised); }
+.replay-card { animation: card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes card-in { from { opacity: 0; transform: translateY(-6px) scale(0.97); } to { opacity: 1; transform: none; } }
+.escalate-bar { height: 3px; border-radius: 2px; background: var(--warn); transform-origin: left; animation: escalate linear forwards; }
+@keyframes escalate { from { transform: scaleX(1); } to { transform: scaleX(0); background: var(--crit-bright); } }
+
+/* ── Evidence screenshots scan in when their case file reaches the viewport ── */
+.in-view .evidence-shot { animation: evidence-scan 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+@keyframes evidence-scan { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.evidence-shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+}
+
+/* ── Deploy pipeline (HSBC): stages pass in sequence via --d ── */
+.pipe-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  color: var(--text-faint);
+  background: var(--surface);
+}
+.pipe-check { color: var(--text-faint); }
+.pipe-link { width: 22px; height: 1px; margin: 0 6px; background: var(--line-strong); }
+.in-view .pipe-step { animation: pipe-pass 0.45s ease var(--d) both; }
+.in-view .pipe-check { animation: pipe-check 0.45s ease var(--d) both; }
+.in-view .pipe-link { animation: pipe-link 0.45s ease var(--d) both; }
+@keyframes pipe-pass {
+  to { color: var(--text); border-color: color-mix(in srgb, var(--ok) 55%, transparent); background: color-mix(in srgb, var(--ok) 8%, transparent); }
+}
+@keyframes pipe-check { from { opacity: 0.3; transform: scale(0.4); } to { opacity: 1; transform: none; color: var(--ok); } }
+@keyframes pipe-link { to { background: var(--ok); } }
+
+/* ── Incident spine (left-edge section timeline) ── */
+.spine { height: 320px; width: 150px; }
+.spine-track { position: absolute; left: 4px; top: 0; bottom: 0; width: 2px; overflow: hidden; border-radius: 2px; background: var(--line); }
+.spine-fill { width: 100%; background: rgb(var(--sev-rgb)); box-shadow: 0 0 10px rgba(var(--sev-rgb), 0.8); transition: height 0.15s linear, background 0.6s ease; }
+.spine-node { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+.spine-dot { flex: none; width: 10px; height: 10px; border-radius: 999px; border: 2px solid var(--line-strong); background: var(--bg); transition: all 0.3s; }
+.spine-node.is-past .spine-dot { border-color: rgb(var(--sev-rgb)); }
+.spine-node.is-active { color: var(--text-dim); }
+.spine-node.is-active .spine-dot { background: rgb(var(--sev-rgb)); box-shadow: 0 0 10px rgba(var(--sev-rgb), 0.9); }
+.spine-label { opacity: 0; transform: translateX(-4px); white-space: nowrap; letter-spacing: 0.08em; text-transform: uppercase; transition: opacity 0.2s, transform 0.2s; }
+.spine-node.is-active .spine-label,
+.spine:hover .spine-label,
+.spine-node:focus-visible .spine-label { opacity: 1; transform: none; }
+
+/* ── First-visit boot: system check, then blast doors (pure CSS; ends hidden without JS) ── */
+.boot { position: fixed; inset: 0; z-index: 100; pointer-events: none; animation: boot-out 0s linear 1.95s forwards; }
+@keyframes boot-out { to { visibility: hidden; } }
+.boot-door { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--bg); }
+.boot-door-top { top: 0; border-bottom: 1px solid rgba(var(--sev-rgb), 0.5); animation: door-top 0.7s cubic-bezier(0.7, 0, 0.2, 1) 1.2s forwards; }
+.boot-door-bottom { bottom: 0; border-top: 1px solid rgba(var(--sev-rgb), 0.5); animation: door-bottom 0.7s cubic-bezier(0.7, 0, 0.2, 1) 1.2s forwards; }
+@keyframes door-top { to { transform: translateY(-101%); } }
+@keyframes door-bottom { to { transform: translateY(101%); } }
+.boot-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--text-dim);
+  animation: boot-text-out 0.25s ease 1.05s forwards;
+}
+.boot-title { margin-bottom: 0.75rem; font-size: clamp(16px, 3vw, 26px); letter-spacing: 0.3em; color: var(--text); }
+.boot-line { opacity: 0; animation: soft-in 0.2s ease forwards; }
+@keyframes boot-text-out { to { opacity: 0; } }
+
+/* ── Chaos mode (Konami code / `chaos`): everything glitches for 5s ── */
+:root[data-chaos="1"] main { animation: chaos-shake 0.18s steps(2) infinite; }
+:root[data-chaos="1"] .panel,
+:root[data-chaos="1"] .panel-raised { filter: hue-rotate(160deg) saturate(1.6); }
+@keyframes chaos-shake {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2px, 1px) skewX(-0.4deg); }
+  100% { transform: translate(2px, -1px); }
+}
+
 /* Respect user preference */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .boot { display: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .cursor { animation: none; }
   .dot { animation: none; }

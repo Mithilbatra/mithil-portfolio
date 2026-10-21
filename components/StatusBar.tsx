@@ -65,7 +65,7 @@ export default function StatusBar() {
     >
       <div className="shell flex h-14 items-center justify-between gap-4">
         {/* Identity */}
-        <a href="#top" className="group flex items-center gap-2.5" aria-label="Back to top">
+        <a href="/#top" className="group flex items-center gap-2.5" aria-label="Back to top">
           <span className="font-mono text-accent">{">"}</span>
           <span className="font-mono text-sm text-ink">
             {PROFILE.handle}
@@ -73,13 +73,7 @@ export default function StatusBar() {
           </span>
           <span className="ml-1 hidden items-center gap-2 sm:flex">
             <span className="dot" aria-hidden />
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
-              <span className="text-crit-bright">0</span> crit
-              <span className="mx-1 text-line-strong">·</span>
-              <span className="text-warn">0</span> warn
-              <span className="mx-1 text-line-strong">·</span>
-              <span className="text-ok">live</span>
-            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ok">live</span>
           </span>
         </a>
 
@@ -88,7 +82,7 @@ export default function StatusBar() {
           {NAV.map((n) => (
             <a
               key={n.id}
-              href={`#${n.id}`}
+              href={`/#${n.id}`}
               className={`rounded-md px-3 py-1.5 font-mono text-[13px] transition-colors ${
                 active === n.id
                   ? "text-accent"
@@ -104,12 +98,20 @@ export default function StatusBar() {
         {/* Right cluster */}
         <div className="flex items-center gap-3">
           <span
-            className="hidden font-mono text-[12px] text-faint lg:inline"
+            className="hidden whitespace-nowrap font-mono text-[12px] text-faint xl:inline"
             aria-hidden
             suppressHydrationWarning
           >
             {mounted ? `${clock} IST` : ""}
           </span>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("console:open"))}
+            className="hidden items-center gap-1 rounded-md border border-line px-2 py-1.5 font-mono text-[11px] text-faint transition-colors hover:border-accent-dim hover:text-accent sm:inline-flex"
+            aria-label="Open command console"
+          >
+            ⌘K
+          </button>
           <a
             href={PROFILE.resumePath}
             target="_blank"
@@ -142,7 +144,7 @@ export default function StatusBar() {
           {NAV.map((n) => (
             <a
               key={n.id}
-              href={`#${n.id}`}
+              href={`/#${n.id}`}
               onClick={() => setOpen(false)}
               className="block rounded-md px-2 py-2.5 font-mono text-sm text-dim hover:text-accent"
             >
