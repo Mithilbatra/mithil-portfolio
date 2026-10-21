@@ -8,7 +8,6 @@ import Systems from "@/components/Systems";
 import Telemetry from "@/components/Telemetry";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import IncidentSpine from "@/components/IncidentSpine";
 import BootIntro from "@/components/BootIntro";
 import SeverityProvider from "@/components/severity/SeverityProvider";
 
@@ -17,7 +16,6 @@ export default function Home() {
     <SeverityProvider>
       <BootIntro />
       <StatusBar />
-      <IncidentSpine />
       <main>
         <Hero />
         <EngineeringLog />

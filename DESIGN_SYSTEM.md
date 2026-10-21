@@ -81,10 +81,12 @@ but `level` + children is optional, so one component renders a streaming console
 line, an `architecture.log` bullet, or an achievement. Hover highlights the row
 like a real log viewer; the left border tints to the row's level.
 
-### SystemLog
-The hero's live `tail -f system.log` — appends `SYSTEM_LOG` entries on an
-interval with generated timestamps and incrementing line numbers, capped to a
-scrolling window. Static full-list fallback under reduced motion.
+### SeverityCore
+The single severity element. A three.js core rendered once in a fixed layer:
+it sits in the hero's `#core-slot`, then flies (scroll-linked transform) to a
+bottom-right dock where it becomes the readout — colour, score, P-level, active
+item, `⚠` on warn/crit — and opens the console on click. Pages without a slot
+start docked. Under reduced motion it snaps instead of flying.
 
 ### SevBadge
 `SEV-1 / SEV-2 / SEV-3` incident badge on case files (critical/major/minor →

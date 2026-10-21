@@ -1,6 +1,5 @@
 import Reveal from "./Reveal";
 import LevelBadge from "./LevelBadge";
-import ScrambleText from "./ScrambleText";
 import type { Level } from "@/lib/data";
 
 interface Props {
@@ -25,15 +24,9 @@ export default function SectionHeader({ index, title, command, blurb, level = "I
       </div>
       <div className="mt-4 flex items-baseline gap-2 font-mono text-sm text-accent">
         <span className="text-faint">$</span>
-        <ScrambleText text={command} trigger="view" />
+        <span>{command}</span>
       </div>
-      <ScrambleText
-        as="h2"
-        text={title}
-        trigger="view"
-        delay={120}
-        className="mt-3 block text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
-      />
+      <h2 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{title}</h2>
       {blurb ? (
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-dim">{blurb}</p>
       ) : null}

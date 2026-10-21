@@ -9,17 +9,17 @@ import { useSeverityZone } from "./severity/useSeverityZone";
 type Ping = { ok: boolean; ms: number | null };
 const SLOTS = 36;
 const POLL_MS = 30_000;
-const pitWall = CASE_FILES.find((c) => c.slug === "pit-wall");
-const sourceOnly = CASE_FILES.filter((c) => !c.links.live);
+const LIVE = CASE_FILES.filter((c) => c.links.live);
+const SOURCE_ONLY = CASE_FILES.filter((c) => !c.links.live);
+const SITE = "portfolio";
 
 const tone = (p: Ping) => (!p.ok ? "var(--crit-bright)" : (p.ms ?? 0) > 900 ? "var(--warn)" : "var(--ok)");
 const uptime = (ps: Ping[]) => (ps.length ? `${((ps.filter((p) => p.ok).length / ps.length) * 100).toFixed(1)}%` : "—");
 
 function Bars({ pings }: { pings: Ping[] }) {
-  const empty = Math.max(0, SLOTS - pings.length);
   return (
     <div className="flex h-7 items-end gap-[3px]" aria-hidden>
-      {Array.from({ length: empty }, (_, i) => (
+      {Array.from({ length: Math.max(0, SLOTS - pings.length) }, (_, i) => (
         <span key={`e${i}`} className="h-[30%] w-[5px] rounded-sm bg-line" />
       ))}
       {pings.map((p, i) => (
@@ -35,24 +35,28 @@ function Bars({ pings }: { pings: Ping[] }) {
 
 /** Real health checks, polled every 30s while the tab is visible. */
 export default function StatusPage() {
-  const [pit, setPit] = useState<Ping[]>([]);
-  const [site, setSite] = useState<Ping[]>([]);
+  const [history, setHistory] = useState<Record<string, Ping[]>>({});
 
   useEffect(() => {
     let alive = true;
+    const push = (latest: Record<string, Ping>) =>
+      setHistory((h) => {
+        const next = { ...h };
+        for (const [k, p] of Object.entries(latest)) next[k] = [...(h[k] ?? []), p].slice(-SLOTS);
+        return next;
+      });
     const poll = async () => {
       if (document.hidden) return;
       const t0 = performance.now();
       try {
         const r = await fetch("/api/status", { cache: "no-store" });
-        const d = (await r.json()) as { pitwall: Ping };
+        const d = (await r.json()) as Record<string, Ping>;
         if (!alive) return;
-        // the route waits on Pit Wall, so subtract that to get this site's own round trip
-        const total = Math.round(performance.now() - t0);
-        setSite((s) => [...s, { ok: r.ok, ms: Math.max(1, total - (d.pitwall.ms ?? 0)) }].slice(-SLOTS));
-        setPit((p) => [...p, d.pitwall].slice(-SLOTS));
+        // checks run in parallel, so the slowest one bounds the wait; the rest is this site
+        const slowest = Math.max(0, ...Object.values(d).map((p) => p.ms ?? 0));
+        push({ ...d, [SITE]: { ok: r.ok, ms: Math.max(1, Math.round(performance.now() - t0) - slowest) } });
       } catch {
-        if (alive) setSite((s) => [...s, { ok: false, ms: null }].slice(-SLOTS));
+        if (alive) push({ [SITE]: { ok: false, ms: null } });
       }
     };
     poll();
@@ -63,13 +67,14 @@ export default function StatusPage() {
     };
   }, []);
 
-  const last = pit[pit.length - 1];
-  const degraded = !!last && !last.ok;
-  const zone = useSeverityZone<HTMLDivElement>(degraded ? "warn" : "ok", degraded ? "status · pit-wall down" : undefined);
+  const latest = (k: string) => history[k]?.[history[k].length - 1];
+  const down = LIVE.filter((c) => latest(c.slug) && !latest(c.slug)!.ok).map((c) => c.slug);
+  const checked = LIVE.some((c) => latest(c.slug));
+  const zone = useSeverityZone<HTMLDivElement>(down.length ? "warn" : "ok", down.length ? `status · ${down.join(", ")} down` : undefined);
 
-  const live = [
-    { name: "pit-wall", detail: pitWall?.links.live?.replace(/^https?:\/\//, "") ?? "", pings: pit },
-    { name: "portfolio", detail: "this site · vercel", pings: site },
+  const rows = [
+    ...LIVE.map((c) => ({ name: c.slug, detail: c.links.live!.replace(/^https?:\/\//, "") })),
+    { name: SITE, detail: "this site · vercel" },
   ];
 
   return (
@@ -79,24 +84,25 @@ export default function StatusPage() {
           index="04"
           command="curl -s /api/status | jq"
           title="System Status"
-          blurb="Real health checks, not decoration — this page pings my production services every 30 seconds while you're here."
+          blurb="Real health checks, not decoration — this page pings my production apps every 30 seconds while you're here."
         />
         <Reveal>
           <div ref={zone.ref} onPointerEnter={zone.onPointerEnter} onPointerLeave={zone.onPointerLeave} className="panel overflow-hidden">
             <div
-              className="flex items-center gap-3 border-b border-line px-5 py-4"
-              style={{ background: `color-mix(in srgb, ${degraded ? "var(--warn)" : "var(--ok)"} 8%, transparent)` }}
+              className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4"
+              style={{ background: `color-mix(in srgb, ${down.length ? "var(--warn)" : "var(--ok)"} 8%, transparent)` }}
             >
-              <span className="dot" style={degraded ? { background: "var(--warn)" } : undefined} aria-hidden />
+              <span className="dot" style={down.length ? { background: "var(--warn)" } : undefined} aria-hidden />
               <span className="text-[15px] font-semibold text-ink">
-                {!last ? "Running checks…" : degraded ? "Degraded performance · pit-wall" : "All systems operational"}
+                {!checked ? "Running checks…" : down.length ? `Degraded · ${down.join(", ")}` : "All systems operational"}
               </span>
-              <span className="ml-auto font-mono text-[11px] text-faint">poll 30s · session window</span>
+              <span className="ml-auto font-mono text-[11px] text-faint">poll 30s · this visit</span>
             </div>
 
             <ul className="divide-y divide-line">
-              {live.map((row) => {
-                const p = row.pings[row.pings.length - 1];
+              {rows.map((row) => {
+                const pings = history[row.name] ?? [];
+                const p = pings[pings.length - 1];
                 return (
                   <li key={row.name} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="min-w-0">
@@ -110,17 +116,17 @@ export default function StatusPage() {
                       <div className="mt-0.5 truncate font-mono text-[11px] text-faint">{row.detail}</div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Bars pings={row.pings} />
-                      <span className="w-14 text-right font-mono text-[11px] text-dim">{uptime(row.pings)}</span>
+                      <Bars pings={pings} />
+                      <span className="w-14 text-right font-mono text-[11px] text-dim">{uptime(pings)}</span>
                     </div>
                   </li>
                 );
               })}
-              {sourceOnly.map((c) => (
-                <li key={c.slug} className="flex items-center gap-2 px-5 py-3.5 font-mono text-[13px] text-dim">
+              {SOURCE_ONLY.map((c) => (
+                <li key={c.slug} className="flex flex-wrap items-center gap-2 px-5 py-3.5 font-mono text-[13px] text-dim">
                   <span className="h-2 w-2 rounded-full bg-line-strong" />
                   {c.slug}
-                  <span className="text-[11px] text-faint">no public endpoint · </span>
+                  <span className="text-[11px] text-faint">mobile app · runs in Expo Go — try the in-browser replica in its case file ·</span>
                   {c.links.source ? (
                     <a href={c.links.source} target="_blank" rel="noopener noreferrer" className="link-underline text-[11px]">
                       source ↗

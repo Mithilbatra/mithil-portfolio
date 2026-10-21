@@ -10,8 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import AmbientGlow from "./AmbientGlow";
-import CriticalIndicator from "./CriticalIndicator";
-import SeverityHUD from "./SeverityHUD";
+import SeverityCore from "./SeverityCore";
 import Console from "../Console";
 import Spotlight from "../Spotlight";
 
@@ -84,11 +83,9 @@ export default function SeverityProvider({ children }: { children: ReactNode }) 
 
   return (
     <SeverityContext.Provider value={{ level: state.level, label: state.label, setHover, setView }}>
-      <div className="sev-bar" aria-hidden />
       {children}
       <AmbientGlow />
-      <CriticalIndicator />
-      <SeverityHUD />
+      <SeverityCore />
       <Console />
       <Spotlight />
     </SeverityContext.Provider>
