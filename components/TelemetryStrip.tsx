@@ -45,7 +45,7 @@ export default function TelemetryStrip() {
                 type="button"
                 onClick={() => setOpenCgpa(true)}
                 aria-haspopup="dialog"
-                aria-label="CGPA 8.93 — view the trend over time"
+                aria-label={`CGPA ${m.value} — view the trend over time`}
                 className="group relative cursor-pointer bg-panel px-5 py-6 text-left transition-colors hover:bg-raised"
               >
                 {content}

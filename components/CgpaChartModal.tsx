@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ACADEMIC } from "@/lib/data";
 
@@ -10,33 +10,28 @@ const PL = 42;
 const PR = 18;
 const PT = 26;
 const PB = 40;
-const Y_MIN = 7.5;
 const Y_MAX = 10;
-const GRID = [7.5, 8, 8.5, 9, 9.5, 10];
+
+// Static data → compute the chart geometry once, at module load.
+const sgpa = ACADEMIC.sgpa;
+const n = sgpa.length;
+const cgpa = sgpa.map((_, i) => sgpa.slice(0, i + 1).reduce((a, b) => a + b, 0) / (i + 1));
+// Axis floor follows the data so a low semester never draws off the chart.
+const Y_MIN = Math.min(7.5, Math.floor(Math.min(...sgpa) * 2) / 2);
+const GRID = Array.from({ length: (Y_MAX - Y_MIN) * 2 + 1 }, (_, i) => Y_MIN + i * 0.5);
+const plotW = W - PL - PR;
+const plotH = H - PT - PB;
+const x = (i: number) => PL + (n === 1 ? 0 : (i / (n - 1)) * plotW);
+const y = (v: number) => PT + (1 - (v - Y_MIN) / (Y_MAX - Y_MIN)) * plotH;
+const line = (arr: number[]) =>
+  arr.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+const cgpaD = line(cgpa);
+const sgpaD = line(sgpa);
+const areaD = `${cgpaD} L ${x(n - 1).toFixed(1)} ${y(Y_MIN).toFixed(1)} L ${x(0).toFixed(1)} ${y(Y_MIN).toFixed(1)} Z`;
+const finalCgpa = cgpa[n - 1].toFixed(2);
 
 export default function CgpaChartModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  const geo = useMemo(() => {
-    const sgpa = ACADEMIC.sgpa;
-    const n = sgpa.length;
-    const cgpa = sgpa.map((_, i) => {
-      const s = sgpa.slice(0, i + 1);
-      return s.reduce((a, b) => a + b, 0) / s.length;
-    });
-    const plotW = W - PL - PR;
-    const plotH = H - PT - PB;
-    const x = (i: number) => PL + (n === 1 ? 0 : (i / (n - 1)) * plotW);
-    const y = (v: number) => PT + (1 - (v - Y_MIN) / (Y_MAX - Y_MIN)) * plotH;
-    const line = (arr: number[]) =>
-      arr.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
-    const cgpaD = line(cgpa);
-    const sgpaD = line(sgpa);
-    const areaD = `${cgpaD} L ${x(n - 1).toFixed(1)} ${y(Y_MIN).toFixed(1)} L ${x(0).toFixed(1)} ${y(
-      Y_MIN
-    ).toFixed(1)} Z`;
-    return { sgpa, cgpa, n, x, y, cgpaD, sgpaD, areaD };
-  }, []);
 
   // Escape to close, focus management, scroll lock
   useEffect(() => {
@@ -44,6 +39,11 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
     const prevActive = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      // The close button is the dialog's only focusable element, so keep Tab on it.
+      if (e.key === "Tab") {
+        e.preventDefault();
+        closeBtnRef.current?.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
@@ -56,10 +56,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
     };
   }, [open, onClose]);
 
-  if (!open || typeof document === "undefined") return null;
-
-  const { sgpa, cgpa, n, x, y, cgpaD, sgpaD, areaD } = geo;
-  const finalCgpa = cgpa[cgpa.length - 1].toFixed(2);
+  if (!open) return null;
 
   return createPortal(
     <div
@@ -80,7 +77,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
           <span className="h-3 w-3 rounded-full bg-warn/80" />
           <span className="h-3 w-3 rounded-full bg-ok/80" />
           <span className="ml-2 font-mono text-[11px] text-faint">
-            cgpa_trend.svg <span className="text-dim">// 6 semesters</span>
+            cgpa_trend.svg <span className="text-dim">// {n} semesters</span>
           </span>
           <button
             ref={closeBtnRef}
@@ -102,7 +99,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
             <h3 className="mt-1 text-xl font-semibold text-ink">CGPA over time</h3>
             <p className="mt-1 text-[13px] text-dim">
               Running average of semester SGPAs — settling at{" "}
-              <span className="font-mono text-accent">{finalCgpa}</span> after 6 semesters.
+              <span className="font-mono text-accent">{finalCgpa}</span> after {n} semesters.
             </p>
           </div>
 
@@ -155,7 +152,6 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
               fill="none"
               stroke="var(--info)"
               strokeWidth="1.6"
-              strokeDasharray="4 4"
               strokeLinecap="round"
               strokeLinejoin="round"
               opacity="0.85"
@@ -230,7 +226,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
               CGPA (cumulative)
             </span>
             <span className="inline-flex items-center gap-2 text-dim">
-              <span className="inline-block h-0 w-5" style={{ borderTop: "1.6px dashed var(--info)" }} />
+              <span className="inline-block h-[2px] w-5" style={{ background: "var(--info)" }} />
               SGPA (per semester)
             </span>
             <span className="ml-auto text-faint">
