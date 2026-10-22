@@ -50,6 +50,7 @@ export default function StatusPage() {
         for (const [k, p] of Object.entries(latest)) next[k] = [...(h[k] ?? []), p].slice(-SLOTS);
         return next;
       });
+    const stamp = () => setCheckedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
     const poll = async () => {
       if (!near || document.hidden || Date.now() - lastAt < 10_000) return;
       lastAt = Date.now();
@@ -58,12 +59,14 @@ export default function StatusPage() {
         const r = await fetch("/api/status", { cache: "no-store", signal: AbortSignal.timeout(10_000) });
         const d = (await r.json()) as Record<string, Ping>;
         if (!alive) return;
-        setCheckedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+        stamp();
         // checks run in parallel, so the slowest one bounds the wait; the rest is this site
         const slowest = Math.max(0, ...Object.values(d).map((p) => p.ms ?? 0));
         push({ ...d, [SITE]: { ok: r.ok, ms: Math.max(1, Math.round(performance.now() - t0) - slowest) } });
       } catch {
-        if (alive) push({ [SITE]: { ok: false, ms: null } });
+        if (!alive) return;
+        stamp();
+        push({ [SITE]: { ok: false, ms: null } }); // the check itself failed; app rows keep their last result
       }
     };
     const io = new IntersectionObserver(
@@ -85,11 +88,12 @@ export default function StatusPage() {
   const latest = (k: string) => history[k]?.[history[k].length - 1];
   const down = LIVE.filter((c) => latest(c.slug) && !latest(c.slug)!.ok).map((c) => c.slug);
   const checked = LIVE.some((c) => latest(c.slug));
+  const checkFailed = latest(SITE)?.ok === false;
   const zone = useSeverityZone<HTMLDivElement>(down.length ? "warn" : "ok", down.length ? `status · ${down.join(", ")} down` : undefined);
 
   const rows = [
     ...LIVE.map((c) => ({ name: c.slug, detail: c.links.live!.replace(/^https?:\/\//, "") })),
-    { name: SITE, detail: "this site · vercel" },
+    { name: SITE, detail: "this site · vercel · approx. round trip" },
   ];
 
   return (
@@ -109,10 +113,16 @@ export default function StatusPage() {
             >
               <span className="dot" style={down.length ? { background: "var(--warn)" } : undefined} aria-hidden />
               <span className="text-[15px] font-semibold text-ink">
-                {!checked ? "Running checks…" : down.length ? `Degraded · ${down.join(", ")}` : "All systems operational"}
+                {!checked
+                  ? checkFailed
+                    ? "Couldn't run the checks — retrying every 30s"
+                    : "Running checks…"
+                  : down.length
+                    ? `Degraded · ${down.join(", ")}`
+                    : "All systems operational"}
               </span>
               <span className="ml-auto font-mono text-[11px] text-faint" aria-live="polite">
-                {checkedAt ? `last check ${checkedAt} · every 30s` : "checks every 30s while you're here"}
+                {checkedAt ? `last check ${checkedAt} · every 30s · % = checks passed this visit` : "checks every 30s while you're here"}
               </span>
             </div>
 
@@ -134,7 +144,9 @@ export default function StatusPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <Bars pings={pings} />
-                      <span className="w-14 text-right font-mono text-[11px] text-dim">{uptime(pings)}</span>
+                      <span className="w-14 text-right font-mono text-[11px] text-dim" title="share of checks that passed since you opened this page">
+                        {uptime(pings)}
+                      </span>
                     </div>
                   </li>
                 );

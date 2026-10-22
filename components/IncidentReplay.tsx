@@ -76,9 +76,9 @@ export default function IncidentReplay() {
   const s = state === "idle" ? null : STATUS[state];
 
   return (
-    <div className="grid items-start gap-6 md:grid-cols-[290px_1fr]">
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[290px_1fr]">
       {/* phone */}
-      <div className="mx-auto w-[290px] rounded-[2.2rem] border border-line-strong bg-[#05070a] p-2 shadow-panel">
+      <div className="mx-auto w-full max-w-[290px] rounded-[2.2rem] border border-line-strong bg-[#05070a] p-2 shadow-panel">
         <div className="relative h-[520px] overflow-hidden rounded-[1.75rem] text-[13px]" style={{ background: "#ecf0f1", color: NAVY }}>
           <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-[#05070a]" />
 
@@ -177,10 +177,26 @@ export default function IncidentReplay() {
           <span className="text-faint">{">"} </span>try it · no expo go needed
         </div>
         <p className="mt-2 text-[14.5px] leading-relaxed text-dim">
-          Resolvr ships as a React Native app that runs in Expo Go, so here&apos;s a faithful replica of its on-call
-          flow running right in your browser — same statuses, same escalation rules. Trigger an alert, then
-          acknowledge it before it escalates.
+          Trigger an alert, then acknowledge it before it escalates.
         </p>
+        <dl className="mt-3 grid gap-2 text-[13px] leading-relaxed">
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">the mobile app</dt>
+            <dd className="text-dim">
+              React Native (Expo) client on a Node.js + Express API with MongoDB, Socket.IO and Firebase Cloud
+              Messaging. Runs in Expo Go against its own backend.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">this browser demo</dt>
+            <dd className="text-dim">
+              A separate React re-implementation inside this portfolio. It reproduces the mobile workflow — the
+              backend&apos;s status names, push-style alerts and escalation — with a client-side state machine, and does{" "}
+              <span className="text-ink">not</span> connect to Resolvr&apos;s backend. Escalation is compressed from 5
+              minutes (up to 3 attempts in the real API) to one escalation after 6 seconds.
+            </dd>
+          </div>
+        </dl>
 
         {/* escalation logic, lit up as the replay moves through it */}
         <ol className="mt-4 flex flex-wrap items-center gap-1.5 font-mono text-[11px]" aria-label="Escalation states">

@@ -21,13 +21,30 @@ export default function RaceWidget() {
   const [failed, setFailed] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
+  // Load once; on failure keep retrying every 30s so the widget recovers when Pit Wall is back.
   useEffect(() => {
-    fetch("/api/pitwall", { signal: AbortSignal.timeout(25_000) })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setData)
-      .catch(() => setFailed(true));
+    let alive = true;
+    let retry = 0;
+    const load = () =>
+      fetch("/api/pitwall", { signal: AbortSignal.timeout(25_000) })
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((d: Data) => {
+          if (!alive) return;
+          setData(d);
+          setFailed(false);
+        })
+        .catch(() => {
+          if (!alive) return;
+          setFailed(true);
+          retry = window.setTimeout(load, 30_000);
+        });
+    load();
     const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
+    return () => {
+      alive = false;
+      clearTimeout(retry);
+      clearInterval(id);
+    };
   }, []);
 
   return (
@@ -45,8 +62,8 @@ export default function RaceWidget() {
       <div aria-live="polite">
         {failed ? (
           <p className="mt-2 font-mono text-[12.5px] text-warn">
-            Couldn&apos;t reach the Pit Wall server just now — the screenshot above shows the live dashboard, and the
-            demo link below still works when it&apos;s up.
+            Couldn&apos;t reach the Pit Wall server — retrying every 30 seconds. The screenshot above shows the live
+            dashboard.
           </p>
         ) : !data ? (
           <p className="mt-2 font-mono text-[12.5px] text-faint">loading the next race weekend…</p>

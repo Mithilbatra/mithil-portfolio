@@ -99,7 +99,7 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
       </button>
 
       {/* Expandable body */}
-      <div id={panelId} className="grid transition-[grid-template-rows] duration-500 ease-out" style={{ gridTemplateRows: open ? "1fr" : "0fr" }}>
+      <div id={panelId} className="grid grid-cols-1 transition-[grid-template-rows] duration-500 ease-out" style={{ gridTemplateRows: open ? "1fr" : "0fr" }}>
         <div className="overflow-hidden">
           <div className="space-y-7 border-t border-line px-5 py-6 sm:px-7 sm:py-7">
             {item.note ? (
@@ -108,6 +108,7 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
 
             <Block label="the problem">{item.problem}</Block>
             {item.role ? <Block label="my role">{item.role}</Block> : null}
+            {item.credit ? <Block label="credits">{item.credit}</Block> : null}
             <Block label="the approach">{item.approach}</Block>
 
             <div>
@@ -133,19 +134,47 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
               </div>
             </div>
 
-            {item.results ? (
+            {item.evaluation ? (
               <div>
-                <Label>results</Label>
-                <div className="mt-3 grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-                  {item.results.map((r, i) => (
-                    <div key={r.label} className="bg-surface px-4 py-3">
-                      <div className={`font-mono text-lg font-semibold ${i === 0 ? "text-accent" : "text-ink"}`}>{r.value}</div>
-                      <div className="text-[13px] text-ink">{r.label}</div>
-                      <div className="mt-0.5 font-mono text-[11px] text-faint">{r.detail}</div>
-                    </div>
-                  ))}
+                <Label>results · model vs baseline</Label>
+                <p className="mt-2 text-[14px] leading-relaxed text-dim">
+                  {item.evaluation.metric} {item.evaluation.method} Baseline: {item.evaluation.baseline}.
+                </p>
+                <div className="mt-3 overflow-x-auto rounded-md border border-line">
+                  <table className="w-full font-mono text-[12px] sm:text-[12.5px]">
+                    <thead className="bg-surface text-left text-[10.5px] uppercase tracking-[0.06em] text-faint sm:tracking-[0.12em]">
+                      <tr>
+                        <th className="px-2 py-2 sm:px-3 font-normal">season</th>
+                        <th className="hidden px-2 py-2 text-right font-normal sm:table-cell sm:px-3">races</th>
+                        <th className="px-2 py-2 sm:px-3 text-right font-normal">model</th>
+                        <th className="px-2 py-2 sm:px-3 text-right font-normal">baseline</th>
+                        <th className="px-2 py-2 sm:px-3 text-right font-normal">Δ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {item.evaluation.rows.map((r) => {
+                        const d = Math.round((r.model - r.baseline) * 10) / 10;
+                        return (
+                          <tr key={r.season}>
+                            <td className="px-2 py-2 text-ink sm:px-3">
+                              {r.season}
+                              <span className="block text-[10.5px] text-faint sm:hidden">{r.races} races</span>
+                            </td>
+                            <td className="hidden px-2 py-2 text-right text-dim sm:table-cell sm:px-3">{r.races}</td>
+                            <td className="px-2 py-2 sm:px-3 text-right text-ink">{r.model.toFixed(1)}%</td>
+                            <td className="px-2 py-2 sm:px-3 text-right text-dim">{r.baseline.toFixed(1)}%</td>
+                            <td className={`px-2 py-2 sm:px-3 text-right ${d < 0 ? "text-warn" : "text-ok"}`}>
+                              {d > 0 ? "+" : d < 0 ? "−" : "±"}
+                              {Math.abs(d).toFixed(1)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-                {item.resultsNote ? <p className="mt-2 text-[12.5px] leading-relaxed text-faint">{item.resultsNote}</p> : null}
+                <p className="mt-2 text-[13.5px] text-ink">{item.evaluation.verdict}</p>
+                <p className="mt-1 text-[12px] leading-relaxed text-faint">{item.evaluation.source}</p>
               </div>
             ) : null}
 
@@ -176,6 +205,13 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
                 {item.slug === "pit-wall" ? <RaceWidget /> : null}
                 {item.slug === "resolvr" ? <IncidentReplay /> : null}
               </div>
+            ) : null}
+
+            {item.demoNote ? (
+              <p className="rounded-md border border-line bg-surface/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-dim">
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">demo access · </span>
+                {item.demoNote}
+              </p>
             ) : null}
 
             {/* links */}

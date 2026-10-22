@@ -75,7 +75,6 @@ export default function StatusBar() {
           </span>
           <span className="ml-1 hidden items-center gap-2 sm:flex">
             <span className="dot" aria-hidden />
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ok">live</span>
           </span>
         </a>
 

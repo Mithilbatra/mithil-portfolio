@@ -24,8 +24,11 @@ export default function Footer() {
           <div className="flex items-center gap-2 font-mono text-[12px] text-faint">
             <span className="dot" aria-hidden />
             <span>
-              <span className="text-dim">{PROFILE.handle}.log</span> — all systems operational · ©{" "}
-              {year}
+              <span className="text-dim">{PROFILE.handle}.log</span> ·{" "}
+              <a href="/#status" className="transition-colors hover:text-accent">
+                live system status
+              </a>{" "}
+              · © {year}
             </span>
           </div>
 
