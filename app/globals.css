@@ -274,7 +274,7 @@ body {
 }
 :root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.07; --glow-size: 110px; --glow-top: 0.03; }
 :root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.12; --glow-size: 135px; --glow-top: 0.05; }
-:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.18; --glow-size: 150px; --glow-top: 0.07; }
+:root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.10; --glow-size: 125px; --glow-top: 0.04; }
 :root[data-theme="light"],
 :root[data-theme="light"][data-sev="ok"] { --sev-rgb: 11, 115, 70; } /* mint glow vanishes on paper */
 

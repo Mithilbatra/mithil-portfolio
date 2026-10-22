@@ -12,7 +12,7 @@ const GREETING = "Hey! I'm Mithil — well, an AI that answers from this site. A
 const QUICK = ["What have you built?", "Tell me about your HSBC internship", "How good is Pit Wall's model?", "How can I contact you?"];
 const LINK_LABELS: Record<string, string> = { cgpa: "CGPA trend", resume: "résumé", github: "GitHub", linkedin: "LinkedIn", leetcode: "LeetCode" };
 const ERRORS: Record<number, string> = {
-  429: "That's a lot of questions — give me a few minutes. The ⌘K console still answers the basics.",
+  429: "I'm getting a lot of questions right now — try again in a minute. The ⌘K console still answers the basics.",
   503: "I'm offline right now. The ⌘K console still answers the basics, and everything is on the page.",
 };
 
