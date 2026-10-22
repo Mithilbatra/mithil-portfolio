@@ -12,6 +12,7 @@ import {
 import AmbientGlow from "./AmbientGlow";
 import SeverityCore from "./SeverityCore";
 import Console from "../Console";
+import AskMithil from "../AskMithil";
 import Spotlight from "../Spotlight";
 
 export type Sev = "ok" | "warn" | "crit";
@@ -87,6 +88,7 @@ export default function SeverityProvider({ children }: { children: ReactNode }) 
       <AmbientGlow />
       <SeverityCore />
       <Console />
+      <AskMithil />
       <Spotlight />
     </SeverityContext.Provider>
   );
