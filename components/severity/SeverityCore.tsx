@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useSeverity, type Sev } from "./SeverityProvider";
 
 const HEX: Record<Sev, number> = { ok: 0x5de9a0, warn: 0xf5b14c, crit: 0xff4757 };
+const HEX_LIGHT: Record<Sev, number> = { ok: 0x0b7346, warn: 0x965800, crit: 0xc8102e }; // readable on paper
 const HUD: Record<Sev, { label: string; tag: string; color: string }> = {
   ok: { label: "NOMINAL", tag: "P4", color: "var(--ok)" },
   warn: { label: "ELEVATED", tag: "P2", color: "var(--warn)" },
@@ -155,11 +156,22 @@ export default function SeverityCore() {
       };
       window.addEventListener("pointermove", onMove, { passive: true });
       const clock = new THREE.Clock();
+      let wasLight = false;
 
       const render = () => {
         const t = clock.getElapsedTime();
         const lv = levelRef.current;
-        tgt.setHex(HEX[lv]);
+        const light = document.documentElement.dataset.theme === "light";
+        if (light !== wasLight) {
+          // additive glow washes out on a light page; plain blending keeps the lines inked
+          wasLight = light;
+          for (const m of [vertMat, coreMat, haloMat]) {
+            m.blending = light ? THREE.NormalBlending : THREE.AdditiveBlending;
+            m.needsUpdate = true;
+          }
+          lineMat.opacity = light ? 0.75 : 0.6;
+        }
+        tgt.setHex((light ? HEX_LIGHT : HEX)[lv]);
         cur.lerp(tgt, 0.06);
         lineMat.color.copy(cur);
         vertMat.color.copy(cur);

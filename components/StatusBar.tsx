@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NAV, PROFILE } from "@/lib/data";
-import { Download } from "./ui/Icons";
+import { Download, Moon, Sun } from "./ui/Icons";
 
 export default function StatusBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -105,6 +105,7 @@ export default function StatusBar() {
           >
             {mounted ? `${clock} IST` : ""}
           </span>
+          <ThemeToggle />
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event("console:open"))}
@@ -156,5 +157,30 @@ export default function StatusBar() {
         </nav>
       ) : null}
     </header>
+  );
+}
+
+/** Light/dark switch; the choice is saved, otherwise the OS setting wins (see app/layout.tsx). */
+function ThemeToggle() {
+  const [light, setLight] = useState(false);
+  useEffect(() => setLight(document.documentElement.dataset.theme === "light"), []);
+  const toggle = () => {
+    const next = light ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {}
+    setLight(!light);
+  };
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="flex h-9 w-9 items-center justify-center rounded-md border border-line text-faint transition-colors hover:border-accent-dim hover:text-accent sm:h-auto sm:w-auto sm:p-1.5"
+      aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
+      title={light ? "Dark mode" : "Light mode"}
+    >
+      {light ? <Moon width={15} height={15} /> : <Sun width={15} height={15} />}
+    </button>
   );
 }

@@ -86,7 +86,7 @@ export default function IncidentForm() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="submit"
-              className="rounded-md px-4 py-2 font-mono text-[13px] font-medium text-[#04140c] transition-transform hover:-translate-y-0.5"
+              className="rounded-md px-4 py-2 font-mono text-[13px] font-medium text-on-accent transition-transform hover:-translate-y-0.5"
               style={{ background: prio.color }}
             >
               file {prio.id} incident
