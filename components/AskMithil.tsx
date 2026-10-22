@@ -5,7 +5,8 @@ import { runCommand } from "@/lib/console.mjs";
 import { CASE_FILES, NAV } from "@/lib/data";
 import { CTX, go, type Action } from "./Console";
 
-type Msg = { role: "user" | "model"; text: string; targets?: string[]; offline?: boolean };
+type Msg = { role: "user" | "model"; text: string; targets?: string[]; followups?: string[]; offline?: boolean };
+const SAVE_KEY = "ask-mithil"; // sessionStorage: the chat survives jumping to another page
 
 const GREETING = "Hey! I'm Mithil — well, an AI that answers from this site. Ask about my projects, my HSBC internship or my skills, or tell me where you want to go and I'll take you there.";
 const QUICK = ["What have you built?", "Tell me about your HSBC internship", "How good is Pit Wall's model?", "How can I contact you?"];
@@ -27,6 +28,25 @@ export default function AskMithil() {
   const launcherRef = useRef<HTMLButtonElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
+  const [restored, setRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(SAVE_KEY) ?? "null");
+      if (Array.isArray(saved?.msgs)) {
+        setMsgs(saved.msgs);
+        setOpen(!!saved.open);
+      }
+    } catch {}
+    setRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!restored) return; // don't overwrite the saved chat before it's been read back
+    try {
+      sessionStorage.setItem(SAVE_KEY, JSON.stringify({ msgs: msgs.slice(-30), open }));
+    } catch {}
+  }, [msgs, open, restored]);
 
   // focus the prompt on open, hand focus back to the launcher on close; Esc closes
   useEffect(() => {
@@ -62,7 +82,9 @@ export default function AskMithil() {
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !d.text) throw r.status;
-      setMsgs((m) => [...m, { role: "model", text: d.text, targets: d.targets }]);
+      setMsgs((m) => [...m, { role: "model", text: d.text, targets: d.targets, followups: d.followups }]);
+      // "take me to …": go there once the reply has rendered (and been saved, in case the page changes)
+      if (d.go) window.setTimeout(() => jump(d.go, true), 700);
     } catch (status) {
       const text = ERRORS[status as number] ?? "Something went wrong reaching the AI. Try again in a moment, or use the ⌘K console.";
       setMsgs((m) => [...m, { role: "model", text, offline: true }]);
@@ -71,9 +93,9 @@ export default function AskMithil() {
     }
   };
 
-  const jump = (target: string) => {
+  const jump = (target: string, auto = false) => {
     const { action } = runCommand(`open ${target}`, CTX) as { action?: Action };
-    if (!action) return;
+    if (!action || (auto && action.external)) return; // browsers block pop-ups nobody clicked
     if (!action.external && window.matchMedia("(max-width: 639px)").matches) setOpen(false); // let phones see where they landed
     go(action);
   };
@@ -159,6 +181,20 @@ export default function AskMithil() {
                     className="rounded-md border border-accent-dim bg-accent/10 px-2 py-1 font-mono text-[11.5px] text-accent transition-colors hover:bg-accent/20"
                   >
                     → {label(t)}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {i === msgs.length - 1 && !busy && m.followups?.length ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {m.followups.map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => ask(q)}
+                    className="rounded-md border border-line bg-surface px-2.5 py-1 text-left text-[12px] text-dim transition-colors hover:border-accent-dim hover:text-ink"
+                  >
+                    {q}
                   </button>
                 ))}
               </div>
