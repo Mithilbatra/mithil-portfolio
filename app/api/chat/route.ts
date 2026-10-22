@@ -143,9 +143,11 @@ export async function POST(req: Request) {
       signal: AbortSignal.timeout(15_000),
     });
     if (!r.ok) {
-      console.error(`chat: gemini ${r.status}`, (await r.text()).slice(0, 300));
-      // 429 = Gemini quota (free tier: requests per minute/day); tell the visitor to retry rather than "broken"
-      return Response.json({ error: r.status === 429 ? "busy" : "upstream" }, { status: r.status === 429 ? 429 : 502 });
+      const body = await r.text();
+      console.error(`chat: gemini ${r.status}`, body.slice(0, 1500));
+      if (r.status !== 429) return Response.json({ error: "upstream" }, { status: 502 });
+      // Gemini quota: a per-minute cap clears soon ("busy"); a daily cap lasts until midnight Pacific ("offline")
+      return /PerDay/i.test(body) ? Response.json({ error: "offline" }, { status: 503 }) : Response.json({ error: "busy" }, { status: 429 });
     }
     const d = (await r.json()) as Gemini;
     const out = readReply(d.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "", TARGETS);
