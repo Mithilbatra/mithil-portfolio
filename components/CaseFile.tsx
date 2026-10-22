@@ -108,7 +108,6 @@ export default function CaseFile({ item, defaultOpen = false }: { item: CaseFile
 
             <Block label="the problem">{item.problem}</Block>
             {item.role ? <Block label="my role">{item.role}</Block> : null}
-            {item.credit ? <Block label="credits">{item.credit}</Block> : null}
             <Block label="the approach">{item.approach}</Block>
 
             <div>

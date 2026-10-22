@@ -14,7 +14,7 @@ export const PROFILE = {
   status: "Available — SWE / New Grad 2027",
   tagline: "I build systems — then I figure out why they break, and make them better.",
   blurb:
-    "CSE undergrad at NIT Delhi and SWE intern at HSBC. I like the unglamorous parts of engineering: making services talk to each other, keeping ML honest, and turning a broken thing into a reliable one.",
+    "CSE undergrad at NIT Delhi; software engineering intern at HSBC in summer 2026. I like the unglamorous parts of engineering: making services talk to each other, keeping ML honest, and turning a broken thing into a reliable one.",
 
   // Contact — verified from resume
   email: "mithil.batra05@gmail.com",
@@ -73,7 +73,6 @@ export interface CaseFile {
     source: string; // model version + where the numbers come from
   };
   limitations?: string;
-  credit?: string; // upstream / shared-codebase acknowledgement
   demoNote?: string; // how to reach the live demo, and its caveats
   links: { source?: string; live?: string };
 }
@@ -141,7 +140,6 @@ export const CASE_FILES: CaseFile[] = [
     category: "availability · on-call",
     symptom: "a service breaks and the signal is scattered — nobody owns the page",
     result: "Raise → escalate → acknowledge → resolve — try the workflow in a browser replica below, no Expo Go needed",
-    credit: "Shared codebase — the same project is also published by Omprakash Tiwari at github.com/omprakash-tiwari/Resolvr (Feb 2026).",
     year: "2026",
     stack: ["React Native", "Expo", "Node.js", "Express", "MongoDB", "Socket.IO", "Firebase (FCM)"],
     note: "The console you're reading is styled like an incident dashboard. Resolvr is the real one.",
@@ -176,8 +174,6 @@ export const CASE_FILES: CaseFile[] = [
     result: "Every spoken answer comes back as structured JSON — a rating plus 3–5 lines of specific feedback",
     limitations:
       "Ratings come from a single Gemini call without a fixed rubric, so the same answer can score differently between runs. Next step: a rubric in the prompt and averaging across several calls.",
-    credit:
-      "Originally created by Omprakash Tiwari — github.com/omprakash-tiwari/automated_ai_interviewer (Jul 2025). This is my copy of that codebase.",
     demoNote:
       "The landing page is public; starting an interview needs a free sign-in (Google or email, via Clerk). There's no guest mode yet — the architecture steps above walk through the full flow.",
     year: "2025",
@@ -226,11 +222,12 @@ export const EXPERIENCE: Deployment[] = [
     period: "Jun 2026 – Jul 2026",
     summary:
       "Worked across internal enterprise services — an AI chatbot, a microservice integration, and a production Spring Boot app.",
-    stages: ["tds-chatbot", "vidura-integration", "panorama-fixes"],
+    stages: ["tds-chatbot", "vidura-integration", "panorama-fixes", "deploy-workflows"],
     work: [
       "Improved an internal TDS chatbot with better intent recognition, response generation, and workflow automation to handle employee tax queries.",
       "Integrated the Vidura microservice into the GPS portal via service integration, API integration, and environment configuration.",
-      "Supported Panorama (Spring Boot + GCP) with bug fixes and code-quality improvements toward production deployment.",
+      "Supported the Panorama application (Spring Boot + GCP) with production bug fixes and code-quality improvements.",
+      "Worked on application debugging, service integration, environment configuration, and production deployment workflows.",
     ],
     tags: ["Spring Boot", "GCP", "Microservices", "NLP", "APIs"],
   },
@@ -243,12 +240,14 @@ export interface SkillGroup {
 }
 
 export const SKILLS: SkillGroup[] = [
-  { label: "Languages", key: "lang", items: ["Java", "Python", "C", "C++", "JavaScript", "TypeScript", "Go"] },
-  { label: "Databases", key: "db", items: ["PostgreSQL", "MySQL", "MongoDB", "Cassandra"] },
-  { label: "Cloud & Tools", key: "cloud", items: ["Azure", "AWS", "GCP", "Docker", "Git", "GitHub", "Postman", "Arduino"] },
-  { label: "Frameworks & Practices", key: "fw", items: ["Spring", "Spring Boot", "Design Patterns", "OOP", "OpenCV"] },
-  { label: "UI / UX", key: "ui", items: ["React", "Next.js", "HTML", "CSS", "Tailwind", "Figma"] },
-  { label: "Core Areas", key: "core", items: ["AI", "Machine Learning", "NLP", "Deep Learning", "LLMs", "RAG"] },
+  { label: "Languages", key: "lang", items: ["Java", "Python", "C", "C++", "JavaScript", "TypeScript"] },
+  { label: "Frameworks & Libraries", key: "fw", items: ["Spring Boot", "Spring", "Next.js", "React", "Flask", "OpenCV", "Tailwind CSS"] },
+  { label: "Backend & APIs", key: "api", items: ["REST APIs", "Microservices", "API Integration", "Webhooks", "Node.js"] },
+  { label: "Databases", key: "db", items: ["PostgreSQL", "MySQL", "MongoDB"] },
+  { label: "Cloud & DevOps", key: "cloud", items: ["GCP", "AWS", "Azure", "Docker", "Git", "GitHub"] },
+  { label: "AI / ML", key: "ml", items: ["Machine Learning", "Deep Learning", "scikit-learn", "Pandas", "Artificial Intelligence"] },
+  { label: "Core", key: "core", items: ["Data Structures & Algorithms", "OOP", "Design Patterns", "Software Engineering"] },
+  { label: "Tools", key: "tools", items: ["Postman", "Arduino", "Figma"] },
 ];
 
 export interface Metric {
@@ -259,7 +258,7 @@ export interface Metric {
 
 export const TELEMETRY: Metric[] = [
   { value: "8.93", label: "CGPA", detail: "B.Tech CSE · NIT Delhi" },
-  { value: "99.467%ile", label: "JEE Mains", detail: "Top 0.5% nationwide" },
+  { value: "99.467%ile", label: "JEE Main", detail: "Top 0.5% nationwide" },
   { value: "AIR 5376", label: "JEE Advanced", detail: "Qualified" },
   { value: "800+", label: "Problems Solved", detail: "Across coding platforms" },
 ];
@@ -279,10 +278,10 @@ export interface Achievement {
 
 export const ACHIEVEMENTS: Achievement[] = [
   { title: "Gold — MST Tournament 2025", detail: "Held at NIT Jaipur", kind: "award" },
-  { title: "Semi-Finalist — Flipkart GRiD", detail: "National engineering challenge", kind: "competition" },
-  { title: "L'Oréal Sustainability Challenge", detail: "Semi-Finalist", kind: "competition" },
+  { title: "Quarter-Finalist — Flipkart GRiD", detail: "National engineering challenge", kind: "competition" },
+  { title: "L'Oréal Sustainability Challenge", detail: "Quarter-Finalist", kind: "competition" },
   { title: "Deputy General Secretary — GDSC", detail: "Google Developer Student Clubs, NIT Delhi", kind: "leadership" },
-  { title: "Executive — Training & Placement Cell", detail: "NIT Delhi", kind: "leadership" },
+  { title: "Executive — Training & Placement Cell", detail: "NIT Delhi · calling and social media team", kind: "leadership" },
 ];
 
 export interface Certification {
@@ -303,7 +302,7 @@ export const CERTIFICATIONS: Certification[] = [
     detail: "Designing and deploying scalable cloud solutions — Functions, Storage, DevOps pipelines.",
   },
   {
-    title: "C++ Subject Matter Expert",
+    title: "C++ Proficient Practitioner",
     issuer: "Edchart",
     detail: "Advanced C++: STL, memory management, and performance optimization.",
   },

@@ -11,7 +11,7 @@ export default function EngineeringLog() {
           index="01"
           command="grep -r 'what broke' ./incidents"
           title="The Engineering Log"
-          blurb="I don't just collect projects — I collect problems. Each case study opens up one project: the symptom, the root cause and the fix, with results, a demo, credits and the source. Click one to open it."
+          blurb="I don't just collect projects — I collect problems. Each case study opens up one project: the symptom, the root cause and the fix, with results, a demo and the source. Click one to open it."
         />
 
         <div className="space-y-4">

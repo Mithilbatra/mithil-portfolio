@@ -29,7 +29,7 @@ export default function Systems() {
         </Reveal>
 
         {/* Skills grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SKILLS.map((g, i) => (
             <Reveal key={g.key} delay={i * 50}>
               <div className="panel h-full px-5 py-5 transition-colors hover:border-line-strong">
