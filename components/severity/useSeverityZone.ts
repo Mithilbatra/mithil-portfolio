@@ -18,10 +18,12 @@ export function useSeverityZone<T extends HTMLElement = HTMLElement>(sev: Sev, l
     if (!el) return;
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting && e.intersectionRatio >= 0.5) setView(id, { sev, label });
+        // half of the element visible, or — for elements taller than the screen — filling half the viewport
+        const fills = e.intersectionRect.height >= (e.rootBounds?.height ?? window.innerHeight) * 0.5;
+        if (e.isIntersecting && (e.intersectionRatio >= 0.5 || fills)) setView(id, { sev, label });
         else setView(id, null);
       },
-      { threshold: [0, 0.5, 1], rootMargin: "-8% 0px -8% 0px" }
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20), rootMargin: "-8% 0px -8% 0px" }
     );
     io.observe(el);
     return () => {

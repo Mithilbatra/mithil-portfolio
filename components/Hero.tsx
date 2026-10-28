@@ -1,8 +1,6 @@
 import { PROFILE } from "@/lib/data";
-import HeroViz from "./HeroViz";
 import TelemetryStrip from "./TelemetryStrip";
 import Reveal from "./ui/Reveal";
-import ScrambleText from "./ui/ScrambleText";
 import { ArrowDown, Download } from "./ui/Icons";
 
 export default function Hero() {
@@ -15,16 +13,9 @@ export default function Hero() {
           {/* Left: identity */}
           <div className="lg:col-span-7">
             <Reveal>
-              <div className="mb-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em]">
-                <span className="inline-flex items-center gap-2 text-ok">
-                  <span className="dot" aria-hidden />
-                  operational
-                </span>
-                <span className="text-line-strong">|</span>
-                <span className="text-faint">
-                  <span className="text-crit-bright">0</span> crit ·{" "}
-                  <span className="text-warn">0</span> open incidents
-                </span>
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-ok">
+                <span className="dot" aria-hidden />
+                {PROFILE.status}
               </div>
             </Reveal>
 
@@ -38,11 +29,7 @@ export default function Hero() {
 
             <Reveal delay={120}>
               <p className="mt-5 font-mono text-sm text-dim">
-                <span className="text-accent">{"//"}</span>{" "}
-                <ScrambleText
-                  text={`${PROFILE.role} · ${PROFILE.focus.join(" · ")}`}
-                  delay={500}
-                />
+                <span className="text-accent">{"//"}</span> {PROFILE.role} · {PROFILE.focus.join(" · ")}
               </p>
             </Reveal>
 
@@ -81,26 +68,10 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          {/* Right: reactive severity core (three.js) */}
+          {/* Right: where the severity core (SeverityCore.tsx) sits before it docks */}
           <div className="lg:col-span-5">
-            <Reveal delay={200}>
-              <div className="panel-raised scanlines relative overflow-hidden shadow-panel">
-                <div className="flex items-center gap-2 border-b border-line-strong bg-surface px-4 py-2.5">
-                  <span className="h-3 w-3 rounded-full bg-crit/80" />
-                  <span className="h-3 w-3 rounded-full bg-warn/80" />
-                  <span className="h-3 w-3 rounded-full bg-ok/80" />
-                  <span className="ml-2 font-mono text-[11px] text-faint">
-                    severity-core <span className="text-dim">// live</span>
-                  </span>
-                </div>
-                <HeroViz />
-                <div className="border-t border-line px-4 py-2.5 text-center font-mono text-[11px] text-faint">
-                  the glow tracks priority — it turns{" "}
-                  <span className="text-warn">amber</span> and{" "}
-                  <span className="text-crit-bright">red</span> as you reach what matters
-                </div>
-              </div>
-            </Reveal>
+            <div id="core-slot" className="mx-auto aspect-square w-full max-w-[400px]" aria-hidden />
+            <p className="mt-2 text-center font-mono text-[11px] text-faint">severity core · scroll, it docks and keeps watch</p>
           </div>
         </div>
 

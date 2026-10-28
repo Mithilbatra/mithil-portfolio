@@ -136,7 +136,7 @@ export const CASE_FILES: CaseFile[] = [
     slug: "ai-mock-interview",
     title: "AI Mock Interviewer",
     subtitle: "Automated, Role-Based Interview Practice",
-    status: "SHIPPED",
+    status: "LIVE",
     severity: 3,
     category: "feedback quality",
     symptom: "interview practice gave feedback too vague to actually act on",
@@ -156,8 +156,13 @@ export const CASE_FILES: CaseFile[] = [
       "Getting the model to produce consistent, useful evaluation instead of vague praise — structuring prompts and schemas so feedback is specific and actionable.",
     learned:
       "A model is only as good as the structure around it. Constrain generation and grading with clear schemas and role context and the quality jumps.",
+    evidence: {
+      src: "/evidence/ai-mock-interview.jpg",
+      caption: "live app · role-based interviews with instant feedback",
+    },
     links: {
       source: "https://github.com/Mithilbatra/automated_ai_interviewer",
+      live: "https://automated-ai-interviewer-nbog.vercel.app",
     },
   },
 ];
