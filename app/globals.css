@@ -4,7 +4,8 @@
 
 /* ───────────────────────────────────────────────
    ENGINEERING LOG — Design Tokens
-   Single, dark-committed theme (a console is dark).
+   Dark by default; [data-theme="light"] swaps in the "paper log" palette.
+   The no-flash script in app/layout.tsx sets it before first paint.
    ─────────────────────────────────────────────── */
 :root {
   /* Type */
@@ -37,7 +38,35 @@
   --crit-bright: #ff4757; /* CRIT 🚨 */
   --info: #56c7f0;    /* DEBUG 🔵 */
 
+  --on-accent: #04140c; /* text on solid accent buttons */
+  --tint: 255, 255, 255; /* hover washes, scanlines, vignette */
+  --shadow-panel: 0 1px 0 0 rgba(255, 255, 255, 0.02) inset, 0 8px 30px -12px rgba(0, 0, 0, 0.6);
+
   color-scheme: dark;
+}
+
+/* Paper log — printed-incident-report light theme (all text ≥ 4.5:1) */
+:root[data-theme="light"] {
+  --bg: #f4f1ea;
+  --surface: #ece8de;
+  --panel: #fbfaf6;
+  --raised: #ffffff;
+  --line: #ddd6c6;
+  --line-strong: #c6bca7;
+  --text: #1d1b17;
+  --text-dim: #4f4a41;
+  --text-faint: #6b6458;
+  --accent: #0b7346;
+  --accent-dim: #9fcfb5;
+  --ok: #11703f;
+  --warn: #965800;
+  --crit: #b0342a;
+  --crit-bright: #c8102e;
+  --info: #1c63a0;
+  --on-accent: #ffffff;
+  --tint: 0, 0, 0;
+  --shadow-panel: 0 1px 2px rgba(40, 32, 16, 0.05), 0 8px 24px -12px rgba(40, 32, 16, 0.18);
+  color-scheme: light;
 }
 
 * {
@@ -56,14 +85,14 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   /* Neutral vignette — severity color is handled by the ambient glow overlay */
-  background-image: radial-gradient(1200px 620px at 50% -12%, rgba(255, 255, 255, 0.025), transparent 60%);
+  background-image: radial-gradient(1200px 620px at 50% -12%, rgba(var(--tint), 0.025), transparent 60%);
   background-attachment: fixed;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(93, 233, 160, 0.24);
-  color: #fff;
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  color: var(--text);
 }
 
 /* Scrollbar */
@@ -74,7 +103,7 @@ body {
   border-radius: 8px;
   border: 3px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: #38424f; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
 /* Focus ring — accessibility */
 :focus-visible {
@@ -142,7 +171,7 @@ body {
   border-radius: 4px;
   transition: background-color 0.14s ease, border-color 0.14s ease;
 }
-.logrow:hover { background: rgba(255, 255, 255, 0.035); border-left-color: var(--line-strong); }
+.logrow:hover { background: rgba(var(--tint), 0.035); border-left-color: var(--line-strong); }
 .logrow.lvl-INFO:hover { border-left-color: var(--ok); }
 .logrow.lvl-WARN:hover { border-left-color: var(--warn); }
 .logrow.lvl-ERROR:hover { border-left-color: var(--crit); }
@@ -173,8 +202,8 @@ body {
   pointer-events: none;
   background-image: repeating-linear-gradient(
     0deg,
-    rgba(255, 255, 255, 0.022) 0px,
-    rgba(255, 255, 255, 0.022) 1px,
+    rgba(var(--tint), 0.022) 0px,
+    rgba(var(--tint), 0.022) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -246,6 +275,8 @@ body {
 :root[data-sev="ok"] { --sev-rgb: 93, 233, 160; --glow-a: 0.07; --glow-size: 110px; --glow-top: 0.03; }
 :root[data-sev="warn"] { --sev-rgb: 245, 177, 76; --glow-a: 0.12; --glow-size: 135px; --glow-top: 0.05; }
 :root[data-sev="crit"] { --sev-rgb: 255, 71, 87; --glow-a: 0.18; --glow-size: 150px; --glow-top: 0.07; }
+:root[data-theme="light"],
+:root[data-theme="light"][data-sev="ok"] { --sev-rgb: 11, 115, 70; } /* mint glow vanishes on paper */
 
 .ambient-glow {
   position: fixed;
@@ -314,7 +345,7 @@ body {
   width: 84px;
   height: 84px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(9, 11, 15, 0.94) 58%, rgba(9, 11, 15, 0.7));
+  background: radial-gradient(circle, color-mix(in srgb, var(--bg) 94%, transparent) 58%, color-mix(in srgb, var(--bg) 70%, transparent));
   border: 1px solid color-mix(in srgb, var(--hud-color) 45%, var(--line));
   box-shadow: 0 0 18px -8px var(--hud-color);
   transition: border-color 0.5s ease, box-shadow 0.5s ease;
@@ -329,7 +360,7 @@ body {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(9, 11, 15, 0.86);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
   backdrop-filter: blur(8px);
   line-height: 1.2;
   text-align: right;
@@ -398,7 +429,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+  background: repeating-linear-gradient(0deg, rgba(var(--tint), 0.03) 0 1px, transparent 1px 3px);
 }
 
 /* ── Deploy pipeline (HSBC): stages pass in sequence via --d ── */

@@ -48,7 +48,7 @@ export default function Hero() {
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a
                   href="#log"
-                  className="group inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 font-mono text-sm font-medium text-[#04140c] transition-transform hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 font-mono text-sm font-medium text-on-accent transition-transform hover:-translate-y-0.5"
                 >
                   explore projects
                   <ArrowDown

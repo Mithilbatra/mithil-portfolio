@@ -30,6 +30,7 @@ const config: Config = {
         crit: "var(--crit)",
         "crit-bright": "var(--crit-bright)",
         info: "var(--info)",
+        "on-accent": "var(--on-accent)",
       },
       fontFamily: {
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
@@ -46,7 +47,7 @@ const config: Config = {
         shell: "1120px",
       },
       boxShadow: {
-        panel: "0 1px 0 0 rgba(255,255,255,0.02) inset, 0 8px 30px -12px rgba(0,0,0,0.6)",
+        panel: "var(--shadow-panel)",
         glow: "0 0 0 1px var(--accent-dim), 0 0 24px -6px var(--accent)",
       },
       keyframes: {

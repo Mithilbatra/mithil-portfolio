@@ -26,8 +26,8 @@ export default function Deployments() {
                           className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em]"
                           style={{
                             color: "var(--ok)",
-                            background: "rgba(70,212,138,0.12)",
-                            border: "1px solid rgba(70,212,138,0.2)",
+                            background: "color-mix(in srgb, var(--ok) 12%, transparent)",
+                            border: "1px solid color-mix(in srgb, var(--ok) 20%, transparent)",
                           }}
                         >
                           <span aria-hidden>🟢</span> deployed
