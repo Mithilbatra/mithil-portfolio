@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test lib/incident.test.mjs lib/console.test.mjs"
+    "test": "node --test lib/incident.test.mjs lib/console.test.mjs lib/chat.test.mjs"
   },
   "dependencies": {
     "animejs": "^3.2.2",

@@ -12,7 +12,7 @@ const QUICK = ["help", "page are you open to full-time roles?", "open resolvr", 
 
 const job = EXPERIENCE[0];
 const school = EDUCATION[0];
-const CTX = {
+export const CTX = {
   profile: PROFILE,
   cases: CASE_FILES,
   sections: NAV.map((n) => n.id),
@@ -25,9 +25,20 @@ const CTX = {
 
 type Line = { cmd: string } | { level: Level; text: string };
 // shape of runCommand's result (lib/console.mjs is plain JS, so TS can't infer it)
-type Action = { type: string; href: string; external?: boolean; name: string; sev: Sev; label: string; ms: number };
+export type Action = { type: string; href: string; external?: boolean; name: string; sev: Sev; label: string; ms: number };
 type Result = { lines: { level: Level; text: string }[]; action?: Action };
 const WELCOME: Line[] = [{ level: "INFO", text: "on-call console — run `help`, a command, or just ask a question" }];
+
+/** Carry out a `nav` or `event` action from `open` — shared with the chat panel. */
+export function go(action: Action) {
+  if (action.type === "event") {
+    // the CGPA popup lives on the home page
+    if (window.location.pathname !== "/") window.location.assign("/#cgpa");
+    else window.dispatchEvent(new Event(action.name));
+  } else if (action.href.startsWith("mailto:")) window.location.href = action.href;
+  else if (action.external) window.open(action.href, "_blank", "noopener,noreferrer");
+  else window.location.assign(action.href);
+}
 
 export default function Console() {
   const [open, setOpen] = useState(false);
@@ -61,18 +72,12 @@ export default function Console() {
         setOpen(false);
         break;
       case "nav":
-        if (action.href.startsWith("mailto:")) window.location.href = action.href;
-        else if (action.external) window.open(action.href, "_blank", "noopener,noreferrer");
-        else {
-          setOpen(false);
-          window.location.assign(action.href);
-        }
+        if (!action.external && !action.href.startsWith("mailto:")) setOpen(false);
+        go(action);
         break;
       case "event":
         setOpen(false);
-        // the CGPA popup lives on the home page
-        if (window.location.pathname !== "/") window.location.assign("/#cgpa");
-        else window.dispatchEvent(new Event(action.name));
+        go(action);
         break;
       case "severity":
         setHover({ sev: action.sev, label: action.label });
