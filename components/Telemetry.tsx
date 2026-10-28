@@ -14,7 +14,7 @@ export default function Telemetry() {
     <section id="telemetry" className="scroll-mt-24 py-20 sm:py-28">
       <div className="shell">
         <SectionHeader
-          index="04"
+          index="06"
           command="tail -f telemetry.log"
           title="Telemetry & Signals"
           blurb="Awards, leadership, and the academic track record behind the profile."

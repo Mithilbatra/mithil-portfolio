@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TELEMETRY } from "@/lib/data";
 import CountUp from "./ui/CountUp";
 import CgpaChartModal from "./CgpaChartModal";
@@ -17,6 +17,14 @@ function MiniChartIcon() {
 
 export default function TelemetryStrip() {
   const [openCgpa, setOpenCgpa] = useState(false);
+
+  // the console's `cgpa` command opens the same popup
+  useEffect(() => {
+    const show = () => setOpenCgpa(true);
+    if (window.location.hash === "#cgpa") show(); // arrived from `cgpa` on another page
+    window.addEventListener("cgpa:open", show);
+    return () => window.removeEventListener("cgpa:open", show);
+  }, []);
 
   return (
     <>

@@ -94,6 +94,26 @@ delete its `live:` line — the button disappears automatically.
 The **résumé** button serves `public/resume.pdf`. Drop a new file at that path
 (same name) to update it.
 
+### Add a project screenshot ("evidence")
+
+Drop an image in `public/evidence/` and add `evidence: { src: "/evidence/<file>", caption: "…" }`
+to that case file in `lib/data.ts`. Pit Wall's is a live capture of the deployed app.
+
+---
+
+## 🕹 Interactive features
+
+| Feature | How to try it | Lives in |
+|---|---|---|
+| Command console / on-call responder | `⌘K` or `~`, then `help`, `open resolvr`, `page are you hiring?` | `components/Console.tsx`, `lib/console.mjs` |
+| Live incident replay | Resolvr case file → **fire test alert** → ack before it escalates | `components/IncidentReplay.tsx`, `lib/incident.mjs` |
+| Real status page | `/#status`, which pings Pit Wall every 30s | `components/StatusPage.tsx`, `app/api/status` |
+| Pit Wall race widget | Pit Wall case file (next GP + model podium) | `components/RaceWidget.tsx`, `app/api/pitwall` |
+| Shareable incident pages + preview cards | `/incidents/<slug>` | `app/incidents/[slug]`, `lib/og-card.tsx` |
+| Easter eggs | `sudo hire mithil`, `chaos`, or ↑↑↓↓←→←→BA | `components/Console.tsx` |
+
+Run the logic tests with `npm test` (Node's built-in runner, no extra deps).
+
 ---
 
 ## 🗂 Project structure

@@ -42,29 +42,6 @@ export const LEVELS: Record<
   CRIT: { label: "CRIT", emoji: "🚨", color: "var(--crit-bright)", desc: "top priority" },
 };
 
-export interface LogEntry {
-  level: Level;
-  source: string;
-  msg: string;
-}
-
-/* The live `tail -f system.log` stream in the hero. Timestamps are generated
-   at runtime so it always looks live. The CRIT line is the punchline. */
-export const SYSTEM_LOG: LogEntry[] = [
-  { level: "INFO", source: "identity", msg: "mithil_batra online · role=swe" },
-  { level: "INFO", source: "education", msg: "nit-delhi · b.tech cse · cgpa=8.93" },
-  { level: "DEBUG", source: "stack", msg: "java · go · spring · postgres · docker" },
-  { level: "INFO", source: "hsbc", msg: "tds-chatbot · intent-recognition improved" },
-  { level: "WARN", source: "f1-pitwall", msg: "data leakage in split → score inflated" },
-  { level: "INFO", source: "f1-pitwall", msg: "patched → walk-forward backtest · honest top-3" },
-  { level: "WARN", source: "resolvr", msg: "on-call unacked 5m → escalating P2→P1" },
-  { level: "ERROR", source: "interviewer", msg: "llm feedback=vague · rejecting output" },
-  { level: "INFO", source: "interviewer", msg: "prompt=schema-bound → feedback=specific ✓" },
-  { level: "INFO", source: "resolvr", msg: "incident closed · open→ack→resolve" },
-  { level: "DEBUG", source: "leetcode", msg: "problems_solved=800+ · streak=active" },
-  { level: "CRIT", source: "hiring", msg: "recommend=PROCEED → technical interview" },
-];
-
 export type CaseStatus = "SHIPPED" | "LIVE" | "ACTIVE" | "ARCHIVED";
 
 export interface CaseFile {
@@ -84,6 +61,7 @@ export interface CaseFile {
   hardPart: string;
   learned: string;
   note?: string; // optional flavour line
+  evidence?: { src: string; caption: string }; // screenshot in public/evidence/
   links: { source?: string; live?: string };
 }
 
@@ -97,6 +75,10 @@ export const CASE_FILES: CaseFile[] = [
     severity: 2,
     category: "data integrity · ml",
     symptom: "podium predictions looked great — because the model was cheating on time",
+    evidence: {
+      src: "/evidence/pit-wall.jpg",
+      caption: "live dashboard · 2026 season · 369 race entries analysed",
+    },
     year: "2025",
     stack: ["Python", "Flask", "scikit-learn", "Pandas", "FastF1", "Docker", "REST APIs"],
     problem:
@@ -186,6 +168,7 @@ export interface Deployment {
   period: string;
   location?: string;
   summary: string;
+  stages: string[]; // short pipeline-stage names, one per `work` item
   work: string[];
   tags: string[];
 }
@@ -197,6 +180,7 @@ export const EXPERIENCE: Deployment[] = [
     period: "Jun 2026 – Jul 2026",
     summary:
       "Worked across internal enterprise services — an AI chatbot, a microservice integration, and a production Spring Boot app.",
+    stages: ["tds-chatbot", "vidura-integration", "panorama-fixes"],
     work: [
       "Improved an internal TDS chatbot with better intent recognition, response generation, and workflow automation to handle employee tax queries.",
       "Integrated the Vidura microservice into the GPS portal via service integration, API integration, and environment configuration.",
@@ -321,9 +305,34 @@ export const COURSEWORK: string[] = [
   "Optimization Techniques",
 ];
 
+/** Engineering principles, each pulled from a real incident above. */
+export const RUNBOOK: { rule: string; body: string; from: string }[] = [
+  {
+    rule: "Honest metrics beat impressive ones",
+    body: "Measure what you'd bet on in production. A walk-forward top-3 hit-rate told the truth where a shuffled split flattered.",
+    from: "pit-wall",
+  },
+  {
+    rule: "Model the states explicitly",
+    body: "Most systems are state machines in disguise. Name the states and the UI, alerts and edge cases fall out of them.",
+    from: "resolvr",
+  },
+  {
+    rule: "Constrain the model, not the user",
+    body: "An LLM is only as good as the structure around it. Schemas and context beat clever prompts.",
+    from: "ai-mock-interview",
+  },
+  {
+    rule: "Leave it more reliable than you found it",
+    body: "Bug fixes and code-quality work aren't glamorous; they're what lets a service ship to production.",
+    from: "hsbc",
+  },
+];
+
 export const NAV = [
   { id: "log", label: "Log" },
   { id: "deployments", label: "Deployments" },
+  { id: "status", label: "Status" },
   { id: "systems", label: "Systems" },
   { id: "telemetry", label: "Telemetry" },
   { id: "contact", label: "Contact" },

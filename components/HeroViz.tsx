@@ -143,15 +143,17 @@ export default function HeroViz() {
         haloMat.color.copy(cur);
         coreMat.color.copy(cur);
 
-        const agitate = lv === "crit" ? 2.6 : lv === "warn" ? 1.6 : 1;
+        // chaos mode (Konami / `chaos` command) spins the core up and blows the halo out
+        const chaos = document.documentElement.dataset.chaos === "1";
+        const agitate = chaos ? 9 : lv === "crit" ? 2.6 : lv === "warn" ? 1.6 : 1;
         group.rotation.y += 0.0016 + 0.0016 * agitate;
         group.rotation.x += 0.0006 * agitate;
-        group.rotation.x += (my * 0.35 - (group.rotation.x % (Math.PI * 2)) * 0) * 0;
         halo.rotation.y -= 0.0007 * agitate;
         halo.rotation.x += 0.0003;
+        halo.scale.setScalar(halo.scale.x + ((chaos ? 1.9 : 1) - halo.scale.x) * 0.08);
 
-        const amp = lv === "crit" ? 0.07 : lv === "warn" ? 0.04 : 0.02;
-        const freq = lv === "crit" ? 6 : lv === "warn" ? 3.4 : 1.8;
+        const amp = chaos ? 0.16 : lv === "crit" ? 0.07 : lv === "warn" ? 0.04 : 0.02;
+        const freq = chaos ? 14 : lv === "crit" ? 6 : lv === "warn" ? 3.4 : 1.8;
         group.scale.setScalar(1 + Math.sin(t * freq) * amp);
         coreMat.opacity = 0.08 + (Math.sin(t * 3) * 0.5 + 0.5) * (lv === "crit" ? 0.28 : 0.12);
         lineMat.opacity = lv === "crit" ? 0.95 : 0.85;
