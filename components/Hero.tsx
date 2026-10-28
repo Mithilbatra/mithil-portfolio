@@ -1,7 +1,7 @@
-import { PROFILE, TELEMETRY } from "@/lib/data";
+import { PROFILE } from "@/lib/data";
 import HeroViz from "./HeroViz";
+import TelemetryStrip from "./TelemetryStrip";
 import Reveal from "./ui/Reveal";
-import CountUp from "./ui/CountUp";
 import ScrambleText from "./ui/ScrambleText";
 import { ArrowDown, Download } from "./ui/Icons";
 
@@ -113,23 +113,7 @@ export default function Hero() {
             <span className="text-dim">snapshot=loaded · 4 metrics</span>
             <span className="ml-2 hidden h-px flex-1 bg-line sm:block" />
           </div>
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
-            {TELEMETRY.map((m) => (
-              <div key={m.label} className="group bg-panel px-5 py-6 transition-colors hover:bg-raised">
-                <CountUp
-                  value={m.value}
-                  className="block font-mono text-2xl font-semibold text-accent sm:text-3xl"
-                />
-                <div className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-ink">
-                  <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
-                  {m.label}
-                </div>
-                {m.detail ? (
-                  <div className="mt-1 font-mono text-[11px] text-faint">{m.detail}</div>
-                ) : null}
-              </div>
-            ))}
-          </div>
+          <TelemetryStrip />
         </Reveal>
       </div>
     </section>
