@@ -71,10 +71,14 @@ export default function StatusBar() {
             {PROFILE.handle}
             <span className="text-faint">.log</span>
           </span>
-          <span className="ml-1 hidden items-center gap-1.5 sm:flex">
+          <span className="ml-1 hidden items-center gap-2 sm:flex">
             <span className="dot" aria-hidden />
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ok">
-              operational
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+              <span className="text-crit-bright">0</span> crit
+              <span className="mx-1 text-line-strong">·</span>
+              <span className="text-warn">0</span> warn
+              <span className="mx-1 text-line-strong">·</span>
+              <span className="text-ok">live</span>
             </span>
           </span>
         </a>

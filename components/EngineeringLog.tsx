@@ -9,9 +9,10 @@ export default function EngineeringLog() {
       <div className="shell">
         <SectionHeader
           index="01"
-          command="cat engineering.log"
+          level="WARN"
+          command="grep -r 'what broke' ./incidents"
           title="The Engineering Log"
-          blurb="I don't just collect projects — I collect problems. Each case file is a real thing I built, opened up: what broke, how I fixed it, and what it taught me. Click one to investigate."
+          blurb="I don't just collect projects — I collect problems. Each case file is a real incident I worked, opened up: the symptom, the root cause, and the resolution. Click one to investigate."
         />
 
         <div className="space-y-4">

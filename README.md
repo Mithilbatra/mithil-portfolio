@@ -8,8 +8,18 @@ architecture, the hard part, and what it taught me.
 The concept isn't just decoration — one of the projects (**Resolvr**) is a real
 incident-management app, so the portfolio's form doubles as proof of the work.
 
-**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · zero heavy
-dependencies. Deploys to Vercel with no configuration.
+**Signature interaction — reactive severity.** The whole page reacts to the
+priority of whatever you're viewing or hovering. A three.js "severity core" in
+the hero, the page's ambient edge-glow, a floating warning triangle, and an
+always-on **severity HUD** (a live ring gauge + 0–100 score, bottom-right) all
+shift together: **green / NOMINAL** → **amber / ELEVATED** on a SEV-2 item →
+**red / CRITICAL (P0)** with a `⚠ CRITICAL` badge on a SEV-1 item (and on the
+hiring-signal card). Section titles **decode** from scrambled glyphs (anime.js)
+as you reach them. Priority is literally impossible to miss.
+
+**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · three.js (hero
+core, lazy-loaded) · anime.js (count-ups). Deploys to Vercel with no
+configuration.
 
 ---
 
@@ -95,19 +105,31 @@ app/
   globals.css       # design tokens + base styles
   icon.svg          # favicon
 components/
-  StatusBar.tsx     # fixed console top-bar (nav, live clock, status)
-  Hero.tsx          # headline + boot console + telemetry strip
-  BootConsole.tsx   # the typing boot-sequence
-  EngineeringLog.tsx / CaseFile.tsx   # projects as case files
+  StatusBar.tsx     # fixed console top-bar (nav, live clock, incident counter)
+  Hero.tsx          # headline + severity core + telemetry strip
+  HeroViz.tsx       # three.js reactive "severity core"
+  EngineeringLog.tsx / CaseFile.tsx   # projects as severity-tagged case files
   Deployments.tsx   # experience (HSBC)
   Systems.tsx       # skills + certifications
   Telemetry.tsx     # achievements + education + coursework
-  Contact.tsx       # contact channels + recommendation card
+  Contact.tsx       # contact channels + CRIT hiring-signal card
   Footer.tsx
-  ui/               # Icons, Reveal, SectionHeader, StatusChip
+  severity/         # SeverityProvider, useSeverityZone, AmbientGlow, CriticalIndicator, SeverityHUD
+  ui/               # Icons, Reveal, SectionHeader, StatusChip, LogLine, LevelBadge, SevBadge, CountUp, ScrambleText
 lib/
-  data.ts           # ← ALL content lives here
+  data.ts           # ← ALL content lives here (levels, severities, copy)
 ```
+
+### Tuning the reactive severity
+
+- **Which items flare, and how hard:** each case file's `severity` (1/2/3) in
+  `lib/data.ts` maps to crit/warn/ok. The contact hiring-signal card is hard-set
+  to `crit` in `components/Contact.tsx`.
+- **Glow intensity / pulse:** the `:root[data-sev="…"]` blocks in
+  `app/globals.css` (`--glow-a`, `--glow-size`, `--sev-rgb`) and the
+  `ambient-pulse` keyframe.
+- **HUD scores / labels:** the `CFG` map in `components/severity/SeverityHUD.tsx`.
+- **3D core look:** `components/HeroViz.tsx` (geometry, particle count, speeds).
 
 ## 🎨 Design system
 

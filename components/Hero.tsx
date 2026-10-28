@@ -1,6 +1,8 @@
 import { PROFILE, TELEMETRY } from "@/lib/data";
-import BootConsole from "./BootConsole";
+import HeroViz from "./HeroViz";
 import Reveal from "./ui/Reveal";
+import CountUp from "./ui/CountUp";
+import ScrambleText from "./ui/ScrambleText";
 import { ArrowDown, Download } from "./ui/Icons";
 
 export default function Hero() {
@@ -13,10 +15,15 @@ export default function Hero() {
           {/* Left: identity */}
           <div className="lg:col-span-7">
             <Reveal>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1">
-                <span className="dot" aria-hidden />
-                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-                  system online
+              <div className="mb-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em]">
+                <span className="inline-flex items-center gap-2 text-ok">
+                  <span className="dot" aria-hidden />
+                  operational
+                </span>
+                <span className="text-line-strong">|</span>
+                <span className="text-faint">
+                  <span className="text-crit-bright">0</span> crit ·{" "}
+                  <span className="text-warn">0</span> open incidents
                 </span>
               </div>
             </Reveal>
@@ -31,8 +38,11 @@ export default function Hero() {
 
             <Reveal delay={120}>
               <p className="mt-5 font-mono text-sm text-dim">
-                <span className="text-accent">{"//"}</span> {PROFILE.role} ·{" "}
-                {PROFILE.focus.join(" · ")}
+                <span className="text-accent">{"//"}</span>{" "}
+                <ScrambleText
+                  text={`${PROFILE.role} · ${PROFILE.focus.join(" · ")}`}
+                  delay={500}
+                />
               </p>
             </Reveal>
 
@@ -71,25 +81,51 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          {/* Right: boot console */}
+          {/* Right: reactive severity core (three.js) */}
           <div className="lg:col-span-5">
             <Reveal delay={200}>
-              <BootConsole />
+              <div className="panel-raised scanlines relative overflow-hidden shadow-panel">
+                <div className="flex items-center gap-2 border-b border-line-strong bg-surface px-4 py-2.5">
+                  <span className="h-3 w-3 rounded-full bg-crit/80" />
+                  <span className="h-3 w-3 rounded-full bg-warn/80" />
+                  <span className="h-3 w-3 rounded-full bg-ok/80" />
+                  <span className="ml-2 font-mono text-[11px] text-faint">
+                    severity-core <span className="text-dim">// live</span>
+                  </span>
+                </div>
+                <HeroViz />
+                <div className="border-t border-line px-4 py-2.5 text-center font-mono text-[11px] text-faint">
+                  the glow tracks priority — it turns{" "}
+                  <span className="text-warn">amber</span> and{" "}
+                  <span className="text-crit-bright">red</span> as you reach what matters
+                </div>
+              </div>
             </Reveal>
           </div>
         </div>
 
-        {/* Telemetry strip */}
+        {/* Telemetry strip — a monitoring readout */}
         <Reveal delay={120} className="mt-16 sm:mt-20">
+          <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+            <span aria-hidden>🟢</span>
+            <span className="text-ok">INFO</span>
+            <span>telemetry</span>
+            <span className="text-dim">snapshot=loaded · 4 metrics</span>
+            <span className="ml-2 hidden h-px flex-1 bg-line sm:block" />
+          </div>
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
             {TELEMETRY.map((m) => (
-              <div key={m.label} className="bg-panel px-5 py-6">
-                <div className="font-mono text-2xl font-semibold text-accent sm:text-3xl">
-                  {m.value}
+              <div key={m.label} className="group bg-panel px-5 py-6 transition-colors hover:bg-raised">
+                <CountUp
+                  value={m.value}
+                  className="block font-mono text-2xl font-semibold text-accent sm:text-3xl"
+                />
+                <div className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-ink">
+                  <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
+                  {m.label}
                 </div>
-                <div className="mt-1.5 text-sm font-medium text-ink">{m.label}</div>
                 {m.detail ? (
-                  <div className="mt-0.5 text-xs text-faint">{m.detail}</div>
+                  <div className="mt-1 font-mono text-[11px] text-faint">{m.detail}</div>
                 ) : null}
               </div>
             ))}

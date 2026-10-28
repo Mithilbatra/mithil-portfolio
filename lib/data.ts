@@ -28,6 +28,43 @@ export const PROFILE = {
   resumePath: "/resume.pdf",
 };
 
+/* ── Log levels — the severity language used across the whole site ── */
+export type Level = "DEBUG" | "INFO" | "WARN" | "ERROR" | "CRIT";
+
+export const LEVELS: Record<
+  Level,
+  { label: string; emoji: string; color: string; desc: string }
+> = {
+  DEBUG: { label: "DEBUG", emoji: "🔵", color: "var(--info)", desc: "trace / detail" },
+  INFO: { label: "INFO", emoji: "🟢", color: "var(--ok)", desc: "healthy signal" },
+  WARN: { label: "WARN", emoji: "🟡", color: "var(--warn)", desc: "needs attention" },
+  ERROR: { label: "ERROR", emoji: "🔴", color: "var(--crit)", desc: "something broke" },
+  CRIT: { label: "CRIT", emoji: "🚨", color: "var(--crit-bright)", desc: "top priority" },
+};
+
+export interface LogEntry {
+  level: Level;
+  source: string;
+  msg: string;
+}
+
+/* The live `tail -f system.log` stream in the hero. Timestamps are generated
+   at runtime so it always looks live. The CRIT line is the punchline. */
+export const SYSTEM_LOG: LogEntry[] = [
+  { level: "INFO", source: "identity", msg: "mithil_batra online · role=swe" },
+  { level: "INFO", source: "education", msg: "nit-delhi · b.tech cse · cgpa=8.93" },
+  { level: "DEBUG", source: "stack", msg: "java · go · spring · postgres · docker" },
+  { level: "INFO", source: "hsbc", msg: "tds-chatbot · intent-recognition improved" },
+  { level: "WARN", source: "f1-pitwall", msg: "data leakage in split → score inflated" },
+  { level: "INFO", source: "f1-pitwall", msg: "patched → walk-forward backtest · honest top-3" },
+  { level: "WARN", source: "resolvr", msg: "on-call unacked 5m → escalating P2→P1" },
+  { level: "ERROR", source: "interviewer", msg: "llm feedback=vague · rejecting output" },
+  { level: "INFO", source: "interviewer", msg: "prompt=schema-bound → feedback=specific ✓" },
+  { level: "INFO", source: "resolvr", msg: "incident closed · open→ack→resolve" },
+  { level: "DEBUG", source: "leetcode", msg: "problems_solved=800+ · streak=active" },
+  { level: "CRIT", source: "hiring", msg: "recommend=PROCEED → technical interview" },
+];
+
 export type CaseStatus = "SHIPPED" | "LIVE" | "ACTIVE" | "ARCHIVED";
 
 export interface CaseFile {
@@ -36,6 +73,9 @@ export interface CaseFile {
   title: string;
   subtitle: string;
   status: CaseStatus;
+  severity: 1 | 2 | 3; // SEV-1 = most critical
+  category: string; // incident class, e.g. "data integrity"
+  symptom: string; // one-line, log-style, shown while collapsed
   year: string;
   stack: string[];
   problem: string;
@@ -54,6 +94,9 @@ export const CASE_FILES: CaseFile[] = [
     title: "Pit Wall",
     subtitle: "F1 Podium Prediction & Analytics Dashboard",
     status: "LIVE",
+    severity: 2,
+    category: "data integrity · ml",
+    symptom: "podium predictions looked great — because the model was cheating on time",
     year: "2025",
     stack: ["Python", "Flask", "scikit-learn", "Pandas", "FastF1", "Docker", "REST APIs"],
     problem:
@@ -82,6 +125,9 @@ export const CASE_FILES: CaseFile[] = [
     title: "Resolvr",
     subtitle: "Incident Management & Real-Time Alerting",
     status: "SHIPPED",
+    severity: 1,
+    category: "availability · on-call",
+    symptom: "a service breaks and the signal is scattered — nobody owns the page",
     year: "2025",
     stack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Node.js", "REST APIs"],
     note: "The console you're reading is styled like an incident dashboard. Resolvr is the real one.",
@@ -109,6 +155,9 @@ export const CASE_FILES: CaseFile[] = [
     title: "AI Mock Interviewer",
     subtitle: "Automated, Role-Based Interview Practice",
     status: "SHIPPED",
+    severity: 3,
+    category: "feedback quality",
+    symptom: "interview practice gave feedback too vague to actually act on",
     year: "2024",
     stack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Google Gemini API"],
     problem:

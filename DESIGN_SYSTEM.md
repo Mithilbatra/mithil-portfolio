@@ -56,7 +56,39 @@ Scale: Tailwind defaults; headings `tracking-tight`; mono labels use
 
 ---
 
+## The log-level system (severity)
+
+Severity is a first-class language used across the whole site. Levels are
+defined once in `lib/data.ts` (`LEVELS`) as `{ label, emoji, color, desc }`:
+
+| Level | Glyph | Color | Meaning |
+|-------|-------|-------|---------|
+| `DEBUG` | 🔵 | info (cyan) | trace / detail |
+| `INFO` | 🟢 | ok (green) | healthy signal |
+| `WARN` | 🟡 | warn (amber) | needs attention |
+| `ERROR` | 🔴 | crit (red) | something broke |
+| `CRIT` | 🚨 | crit-bright | top priority — always highlighted |
+
+**Priority is made visible:** `.logrow.lvl-CRIT` gets a persistent red wash +
+left border (and `.lvl-WARN` a faint amber wash), so the eye lands on the most
+important line first — in the hero stream, that's the `CRIT hiring` recommendation.
+
 ## Components
+
+### LogLine
+The core repeated unit: `[gutter] [time] LEVEL [source] message`. Everything
+but `level` + children is optional, so one component renders a streaming console
+line, an `architecture.log` bullet, or an achievement. Hover highlights the row
+like a real log viewer; the left border tints to the row's level.
+
+### SystemLog
+The hero's live `tail -f system.log` — appends `SYSTEM_LOG` entries on an
+interval with generated timestamps and incrementing line numbers, capped to a
+scrolling window. Static full-list fallback under reduced motion.
+
+### SevBadge
+`SEV-1 / SEV-2 / SEV-3` incident badge on case files (critical/major/minor →
+crit-bright / warn / info). Pairs emoji + label + color, never color alone.
 
 ### StatusChip
 Status pill with a colored dot + uppercase mono label.
@@ -69,8 +101,9 @@ Status pill with a colored dot + uppercase mono label.
 | `ARCHIVED` | faint | Retired |
 
 ### CaseFile
-Expandable project record. Collapsed: id, title, status, year, stack chips.
-Expanded: Problem → Approach → Architecture → Hard Part → Learned → links.
+Expandable **incident report**. Collapsed: id, title, SevBadge, status, year,
+a `symptom` log line, stack chips. Expanded: incident meta → Problem → Approach
+→ `architecture.log` (LogLines) → 🔴 ROOT CAUSE + 🟢 RESOLUTION → links.
 
 - **States:** default · hover (`border-line-strong`) · open (`border-accent-dim`,
   chevron rotates). Row is a `<button>` with `aria-expanded` / `aria-controls`.
