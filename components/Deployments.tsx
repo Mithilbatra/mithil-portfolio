@@ -1,7 +1,6 @@
 import { EXPERIENCE } from "@/lib/data";
 import SectionHeader from "./ui/SectionHeader";
 import Reveal from "./ui/Reveal";
-import LogLine from "./ui/LogLine";
 
 export default function Deployments() {
   return (
@@ -16,7 +15,6 @@ export default function Deployments() {
 
         <div className="space-y-4">
           {EXPERIENCE.map((d, i) => {
-            const src = d.org.toLowerCase();
             return (
               <Reveal key={d.org + i}>
                 <article className="panel px-5 py-6 sm:px-8 sm:py-8">
@@ -57,14 +55,14 @@ export default function Deployments() {
                     ))}
                   </ol>
 
-                  {/* Work as a deploy log */}
-                  <div className="mt-4 rounded-md border border-line bg-surface/60 py-2">
+                  <ul className="mt-4 space-y-2.5">
                     {d.work.map((w, j) => (
-                      <LogLine key={j} n={j + 1} level="INFO" source={src} emoji={false}>
+                      <li key={j} className="flex gap-3 text-[15px] leading-relaxed text-dim">
+                        <span className="mt-[9px] h-1.5 w-1.5 flex-none rounded-full bg-accent-dim" aria-hidden />
                         {w}
-                      </LogLine>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
 
                   <div className="mt-6 flex flex-wrap gap-1.5">
                     {d.tags.map((t) => (

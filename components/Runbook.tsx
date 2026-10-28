@@ -10,7 +10,7 @@ export default function Runbook() {
           index="02"
           command="cat RUNBOOK.md"
           title="My Runbook"
-          blurb="Four rules I engineer by — each one paid for by a real incident."
+          blurb="Four rules I engineer by — each one learned the hard way on a project above."
         />
         <ol className="grid gap-4 sm:grid-cols-2">
           {RUNBOOK.map((r, i) => {

@@ -9,16 +9,15 @@ export default function EngineeringLog() {
       <div className="shell">
         <SectionHeader
           index="01"
-          level="WARN"
           command="grep -r 'what broke' ./incidents"
           title="The Engineering Log"
-          blurb="I don't just collect projects — I collect problems. Each case file is a real incident I worked, opened up: the symptom, the root cause, and the resolution. Click one to investigate."
+          blurb="I don't just collect projects — I collect problems. Each case study opens up one project: the symptom, the root cause and the fix, with results, a demo, credits and the source. Click one to open it."
         />
 
         <div className="space-y-4">
           {CASE_FILES.map((c, i) => (
             <Reveal key={c.id} delay={i * 70}>
-              <CaseFile item={c} defaultOpen={i === 0} />
+              <CaseFile item={c} />
             </Reveal>
           ))}
         </div>

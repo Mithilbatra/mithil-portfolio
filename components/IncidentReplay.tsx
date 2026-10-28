@@ -14,7 +14,7 @@ const INC = "INC-0042";
 // Resolvr's own palette + status names (resolvr-expo IncidentsScreen)
 const NAVY = "#2c3e50";
 const STATUS: Record<Exclude<State, "idle">, { label: string; color: string }> = {
-  triggered: { label: "TRIGGERED", color: "#f39c12" },
+  triggered: { label: "ACTIVE", color: "#f39c12" }, // the backend's Incident.status enum calls this "active"
   escalated: { label: "ESCALATED", color: "#e74c3c" },
   acked: { label: "ACKNOWLEDGED", color: "#3498db" },
   resolved: { label: "RESOLVED", color: "#27ae60" },
@@ -76,9 +76,9 @@ export default function IncidentReplay() {
   const s = state === "idle" ? null : STATUS[state];
 
   return (
-    <div className="grid items-start gap-6 md:grid-cols-[290px_1fr]">
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[290px_1fr]">
       {/* phone */}
-      <div className="mx-auto w-[290px] rounded-[2.2rem] border border-line-strong bg-[#05070a] p-2 shadow-panel">
+      <div className="mx-auto w-full max-w-[290px] rounded-[2.2rem] border border-line-strong bg-[#05070a] p-2 shadow-panel">
         <div className="relative h-[520px] overflow-hidden rounded-[1.75rem] text-[13px]" style={{ background: "#ecf0f1", color: NAVY }}>
           <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-[#05070a]" />
 
@@ -177,9 +177,47 @@ export default function IncidentReplay() {
           <span className="text-faint">{">"} </span>try it · no expo go needed
         </div>
         <p className="mt-2 text-[14.5px] leading-relaxed text-dim">
-          Resolvr ships as a React Native app that runs in Expo Go, so here&apos;s a faithful replica of its on-call
-          flow running right in your browser — same statuses, same escalation rules. Trigger an alert, then
-          acknowledge it before it escalates.
+          Trigger an alert, then acknowledge it before it escalates.
+        </p>
+        <dl className="mt-3 grid gap-2 text-[13px] leading-relaxed">
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">the mobile app</dt>
+            <dd className="text-dim">
+              React Native (Expo) client on a Node.js + Express API with MongoDB, Socket.IO and Firebase Cloud
+              Messaging. Runs in Expo Go against its own backend.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">this browser demo</dt>
+            <dd className="text-dim">
+              A separate React re-implementation inside this portfolio. It reproduces the mobile workflow — the
+              backend&apos;s status names, push-style alerts and escalation — with a client-side state machine, and does{" "}
+              <span className="text-ink">not</span> connect to Resolvr&apos;s backend. Escalation is compressed from 5
+              minutes (up to 3 attempts in the real API) to one escalation after 6 seconds.
+            </dd>
+          </div>
+        </dl>
+
+        {/* escalation logic, lit up as the replay moves through it */}
+        <ol className="mt-4 flex flex-wrap items-center gap-1.5 font-mono text-[11px]" aria-label="Escalation states">
+          {(["triggered", "escalated", "acked", "resolved"] as const).map((st, i) => (
+            <li key={st} className="flex items-center gap-1.5">
+              {i > 0 ? <span className="text-faint">{i === 1 ? "—6s, no ack→" : "→"}</span> : null}
+              <span
+                className="rounded border px-2 py-0.5"
+                style={
+                  state === st
+                    ? { color: STATUS[st].color, borderColor: STATUS[st].color, background: `${STATUS[st].color}1f` }
+                    : { color: "var(--text-faint)", borderColor: "var(--line)" }
+                }
+              >
+                {STATUS[st].label.toLowerCase()}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-1.5 font-mono text-[11px] text-faint">
+          acknowledging while active skips escalation · transitions unit-tested (lib/incident.test.mjs)
         </p>
         <div className="mt-4 rounded-md border border-line bg-bg/60 py-1.5" aria-live="polite">
           {log.length ? (

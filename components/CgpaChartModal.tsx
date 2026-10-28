@@ -7,7 +7,7 @@ import { ACADEMIC } from "@/lib/data";
 const W = 520;
 const H = 310;
 const PL = 42;
-const PR = 18;
+const PR = 64; // right margin holds the final-CGPA label, past where both lines end
 const PT = 26;
 const PB = 40;
 const Y_MAX = 10;
@@ -98,7 +98,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
             </div>
             <h3 className="mt-1 text-xl font-semibold text-ink">CGPA over time</h3>
             <p className="mt-1 text-[13px] text-dim">
-              Running average of semester SGPAs — settling at{" "}
+              Equal-weighted running average of semester SGPAs — settling at{" "}
               <span className="font-mono text-accent">{finalCgpa}</span> after {n} semesters.
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
                   strokeWidth="1"
                   strokeDasharray={g === Y_MIN ? "0" : "3 4"}
                 />
-                <text x={PL - 8} y={y(g) + 3} textAnchor="end" className="font-mono" fontSize="9" fill="var(--text-faint)">
+                <text x={PL - 8} y={y(g) + 3} textAnchor="end" className="font-mono" fontSize="10.5" fill="var(--text-faint)">
                   {g.toFixed(1)}
                 </text>
               </g>
@@ -136,7 +136,7 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
 
             {/* x labels */}
             {sgpa.map((_, i) => (
-              <text key={i} x={x(i)} y={H - PB + 18} textAnchor="middle" className="font-mono" fontSize="9" fill="var(--text-faint)">
+              <text key={i} x={x(i)} y={H - PB + 18} textAnchor="middle" className="font-mono" fontSize="10.5" fill="var(--text-faint)">
                 S{i + 1}
               </text>
             ))}
@@ -182,7 +182,9 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
                   fill="var(--bg)"
                   stroke="var(--info)"
                   strokeWidth="1.6"
-                />
+                >
+                  <title>{`S${i + 1} · SGPA ${v.toFixed(2)}`}</title>
+                </circle>
               ))}
               {cgpa.map((v, i) => (
                 <circle
@@ -195,27 +197,20 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
                   fill="var(--bg)"
                   stroke="var(--accent)"
                   strokeWidth="2"
-                />
+                >
+                  <title>{`S${i + 1} · CGPA ${v.toFixed(2)}`}</title>
+                </circle>
               ))}
             </g>
 
-            {/* cgpa value labels */}
-            <g>
-              {cgpa.map((v, i) => (
-                <text
-                  key={i}
-                  className="chart-label font-mono"
-                  style={{ animationDelay: `${1.05 + i * 0.05}s` }}
-                  x={x(i)}
-                  y={y(v) - 10}
-                  textAnchor="middle"
-                  fontSize="9.5"
-                  fontWeight="600"
-                  fill="var(--accent)"
-                >
-                  {v.toFixed(2)}
-                </text>
-              ))}
+            {/* final CGPA in the right margin — nothing is drawn there, so no line or dot can cross it */}
+            <g className="chart-label" style={{ animationDelay: "1.05s" }}>
+              <text x={x(n - 1) + 12} y={y(cgpa[n - 1]) + 5} className="font-mono" fontSize="14" fontWeight="700" fill="var(--accent)">
+                {finalCgpa}
+              </text>
+              <text x={x(n - 1) + 12} y={y(cgpa[n - 1]) + 18} className="font-mono" fontSize="9.5" fill="var(--text-faint)">
+                CGPA
+              </text>
             </g>
           </svg>
 
@@ -232,6 +227,40 @@ export default function CgpaChartModal({ open, onClose }: { open: boolean; onClo
             <span className="ml-auto text-faint">
               final CGPA <span className="text-accent">{finalCgpa}</span>
             </span>
+          </div>
+
+          <div className="mt-4 overflow-x-auto rounded-md border border-line">
+            <table className="w-full font-mono text-[11px] sm:text-[11.5px]">
+              <caption className="sr-only">Semester GPA (SGPA) and cumulative CGPA for each semester</caption>
+              <thead className="bg-surface text-faint">
+                <tr>
+                  <th scope="col" className="py-1.5 pl-2 pr-1 sm:px-2.5 text-left font-normal">sem</th>
+                  {sgpa.map((_, i) => (
+                    <th key={i} scope="col" className="px-1 py-1.5 sm:px-1.5 text-right font-normal">
+                      S{i + 1}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                <tr>
+                  <th scope="row" className="py-1.5 pl-2 pr-1 sm:px-2.5 text-left font-normal text-info">SGPA</th>
+                  {sgpa.map((v, i) => (
+                    <td key={i} className="px-1 py-1.5 sm:px-1.5 text-right text-ink">
+                      {v.toFixed(2)}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <th scope="row" className="py-1.5 pl-2 pr-1 sm:px-2.5 text-left font-normal text-accent">CGPA</th>
+                  {cgpa.map((v, i) => (
+                    <td key={i} className="px-1 py-1.5 sm:px-1.5 text-right text-ink">
+                      {v.toFixed(2)}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

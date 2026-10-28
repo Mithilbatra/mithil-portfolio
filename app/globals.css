@@ -359,7 +359,7 @@ body {
 /* ── Spotlight: the panel under the cursor gets a severity-tinted light (Spotlight.tsx sets --mx/--my).
    Unlayered, so it adds an image layer on top of the layered .panel background colour. */
 .panel, .panel-raised {
-  background-image: radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), rgba(var(--sev-rgb), 0.075), transparent 65%);
+  background-image: radial-gradient(300px circle at var(--mx, -999px) var(--my, -999px), rgba(var(--sev-rgb), 0.035), transparent 65%);
 }
 
 /* ── Incident replay (Resolvr demo) ── */
@@ -367,6 +367,26 @@ body {
 @keyframes push-in { from { opacity: 0; transform: translateY(-130%); } to { opacity: 1; transform: none; } }
 .replay-card { animation: card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
 @keyframes card-in { from { opacity: 0; transform: translateY(-6px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* ── Architecture as a connected flow (CaseFile) ── */
+.arch-node { position: relative; display: flex; align-items: flex-start; gap: 0.75rem; padding-bottom: 0.85rem; font-size: 14px; line-height: 1.55; color: var(--text-dim); }
+.arch-node:last-child { padding-bottom: 0; }
+.arch-node:not(:last-child)::before { content: ""; position: absolute; left: 11px; top: 22px; bottom: 0; width: 1px; background: var(--line-strong); }
+.arch-num {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
 .escalate-bar { height: 3px; border-radius: 2px; background: var(--warn); transform-origin: left; animation: escalate linear forwards; }
 @keyframes escalate { from { transform: scaleX(1); } to { transform: scaleX(0); background: var(--crit-bright); } }
 

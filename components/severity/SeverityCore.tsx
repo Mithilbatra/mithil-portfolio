@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import { useSeverity, type Sev } from "./SeverityProvider";
 
 const HEX: Record<Sev, number> = { ok: 0x5de9a0, warn: 0xf5b14c, crit: 0xff4757 };
-const HUD: Record<Sev, { label: string; tag: string; score: number; color: string }> = {
-  ok: { label: "NOMINAL", tag: "P4", score: 6, color: "var(--ok)" },
-  warn: { label: "ELEVATED", tag: "P2", score: 58, color: "var(--warn)" },
-  crit: { label: "CRITICAL", tag: "P0", score: 96, color: "var(--crit-bright)" },
+const HUD: Record<Sev, { label: string; tag: string; color: string }> = {
+  ok: { label: "NOMINAL", tag: "P4", color: "var(--ok)" },
+  warn: { label: "ELEVATED", tag: "P2", color: "var(--warn)" },
+  crit: { label: "CRITICAL", tag: "P0", color: "var(--crit-bright)" },
 };
 
 const BASE = 420; // canvas size in CSS px; the dock just scales it down
@@ -28,7 +28,7 @@ function Triangle({ color }: { color: string }) {
 /**
  * The page's single severity element. In the hero it fills #core-slot; as you
  * scroll it flies to the bottom-right corner and docks, becoming the severity
- * readout (colour, triangle, score). Click it once docked to page on-call.
+ * readout (colour, triangle, level). Click it once docked to page on-call.
  * Pages without a #core-slot start docked.
  */
 export default function SeverityCore() {
@@ -214,10 +214,10 @@ export default function SeverityCore() {
         className="core-hud"
         style={{ ["--hud-color" as string]: cfg.color }}
         onClick={() => window.dispatchEvent(new Event("console:open"))}
-        aria-label={`Severity ${cfg.label}, ${cfg.score} of 100. Open the on-call console.`}
+        aria-label={`Page severity ${cfg.label}. Open the on-call console.`}
       >
         <span className="core-hud-meta" aria-live="polite">
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">severity · {cfg.score}/100</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">page severity</span>
           <span className="flex items-center justify-end gap-1.5 font-mono text-[13px] font-semibold" style={{ color: cfg.color }}>
             {level !== "ok" ? <Triangle color={cfg.color} /> : null}
             {cfg.label} <span className="text-faint">· {cfg.tag}</span>

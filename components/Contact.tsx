@@ -49,7 +49,7 @@ export default function Contact() {
           blurb="Hiring, collaborating, or just want to talk shop about systems and F1? Reach out."
         />
 
-        <div className="grid gap-4 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           {/* Channels */}
           <Reveal className="lg:col-span-3">
             <div className="panel h-full overflow-hidden">

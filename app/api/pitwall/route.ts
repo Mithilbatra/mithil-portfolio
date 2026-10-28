@@ -19,6 +19,7 @@ export async function GET() {
     const d = await r.json();
     const nr = d.next_race;
     const body = {
+      fetchedAt: new Date().toISOString(),
       race: nr ? { event: nr.event, location: nr.location, round: nr.round, utc: nr.race_utc } : null,
       podium: ((d.forecast?.projection ?? []) as Projection[]).slice(0, 3).map(({ driver, team, prob }) => ({ driver, team, prob })),
     };
