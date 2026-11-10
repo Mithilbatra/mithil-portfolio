@@ -10,7 +10,7 @@ const SAVE_KEY = "ask-mithil"; // sessionStorage: the chat survives jumping to a
 
 const GREETING = "Hey! I'm Mithil — well, an AI that answers from this site. Ask about my projects, my HSBC internship or my skills, or tell me where you want to go and I'll take you there.";
 const QUICK = ["What have you built?", "Tell me about your HSBC internship", "How good is Pit Wall's model?", "How can I contact you?"];
-const LINK_LABELS: Record<string, string> = { cgpa: "CGPA trend", resume: "résumé", github: "GitHub", linkedin: "LinkedIn", leetcode: "LeetCode" };
+const LINK_LABELS: Record<string, string> = { activity: "Activity heatmap", cgpa: "CGPA trend", resume: "résumé", github: "GitHub", linkedin: "LinkedIn", leetcode: "LeetCode" };
 const ERRORS: Record<number, string> = {
   429: "I'm getting a lot of questions right now — try again in a minute. The ⌘K console still answers the basics.",
   503: "I'm offline right now. The ⌘K console still answers the basics, and everything is on the page.",
