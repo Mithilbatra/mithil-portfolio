@@ -12,8 +12,6 @@ const HUD: Record<Sev, { label: string; tag: string; color: string }> = {
 };
 
 const BASE = 420; // canvas size in CSS px; the dock just scales it down
-const MARGIN = 20; // dock distance from the viewport corner (matches .core-hud)
-const dockSize = () => (window.innerWidth < 640 ? 56 : 84); // matches .core-hud-disc
 const ease = (t: number) => t * t * (3 - 2 * t);
 
 function Triangle({ color }: { color: string }) {
@@ -38,6 +36,7 @@ export default function SeverityCore() {
   const coreRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const hudRef = useRef<HTMLButtonElement>(null);
+  const discRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     levelRef.current = level;
@@ -47,27 +46,27 @@ export default function SeverityCore() {
   useEffect(() => {
     const core = coreRef.current;
     const hud = hudRef.current;
-    if (!core || !hud) return;
+    const disc = discRef.current;
+    if (!core || !hud || !disc) return;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
     const place = () => {
       raf = 0;
-      const d = dockSize();
-      // clientWidth excludes the scrollbar, matching how CSS `right:` places the dock disc
-      const dx = document.documentElement.clientWidth - MARGIN - d;
-      const dy = document.documentElement.clientHeight - MARGIN - d;
+      // The core shares the disc's CSS corner (bottom-right), so docked it needs no offset at all;
+      // in flight it's offset from the disc's real position toward the hero slot.
+      const a = disc.getBoundingClientRect();
       const slot = document.getElementById("core-slot");
       let e = 1;
-      let x = dx;
-      let y = dy;
-      let size = d;
+      let x = 0;
+      let y = 0;
+      let size = a.width;
       if (slot) {
         const r = slot.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, window.scrollY / (r.top + window.scrollY + r.height * 0.5)));
         e = reduce ? (t > 0.5 ? 1 : 0) : ease(t);
-        x = r.left + (dx - r.left) * e;
-        y = r.top + (dy - r.top) * e;
-        size = r.width + (d - r.width) * e;
+        x = (r.right - a.right) * (1 - e);
+        y = (r.bottom - a.bottom) * (1 - e);
+        size = r.width + (a.width - r.width) * e;
       }
       core.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${size / BASE})`;
       hud.dataset.docked = e > 0.98 ? "1" : "0";
@@ -236,7 +235,7 @@ export default function SeverityCore() {
           </span>
           <span className="font-mono text-[10px] text-dim">{label ?? "click to page on-call"}</span>
         </span>
-        <span className="core-hud-disc" />
+        <span ref={discRef} className="core-hud-disc" />
       </button>
       <div ref={coreRef} className="core" aria-hidden>
         <div ref={mountRef} className="relative" style={{ width: BASE, height: BASE }}>

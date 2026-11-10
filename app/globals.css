@@ -326,7 +326,8 @@ body {
 /* chart dots scale from their own center */
 .chart-dot { transform-box: fill-box; transform-origin: center; animation: dot-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 /* ── Severity core: one fixed element that flies from the hero slot to the dock (SeverityCore.tsx) ── */
-.core { position: fixed; left: 0; top: 0; z-index: 46; transform-origin: 0 0; pointer-events: none; will-change: transform; }
+/* anchored to the same corner as the dock disc: CSS follows iOS Safari's sliding toolbar, JS viewport maths doesn't */
+.core { position: fixed; right: 20px; bottom: 20px; z-index: 46; transform-origin: 100% 100%; pointer-events: none; will-change: transform; }
 .core-hud {
   position: fixed;
   right: 20px;
