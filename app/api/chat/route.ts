@@ -22,7 +22,7 @@ const LIMIT = 20; // messages per visitor per window
 const WINDOW = 10 * 60 * 1000;
 
 // Everything the assistant may navigate to; the chat panel resolves these through the console's `open`.
-const TARGETS = [...NAV.map((n) => n.id), ...CASE_FILES.map((c) => c.slug), "cgpa", "resume", "github", "linkedin", "leetcode"];
+const TARGETS = [...NAV.map((n) => n.id), "activity", ...CASE_FILES.map((c) => c.slug), "cgpa", "resume", "github", "linkedin", "leetcode"];
 
 const FACTS = [
   `${PROFILE.name} — ${PROFILE.role}. ${PROFILE.blurb} Status: ${PROFILE.status}. Email: ${PROFILE.email}. GitHub: ${PROFILE.github}. LinkedIn: ${PROFILE.linkedin}. LeetCode: ${PROFILE.leetcode}.`,
@@ -53,7 +53,7 @@ const FACTS = [
   `Skills: ${SKILLS.map((g) => `${g.label}: ${g.items.join(", ")}`).join("; ")}.`,
   `Achievements: ${[...TELEMETRY.map((m) => `${m.label} ${m.value} (${m.detail})`), ...ACHIEVEMENTS.map((a) => `${a.title} — ${a.detail}`)].join("; ")}.`,
   `Certifications: ${CERTIFICATIONS.map((c) => `${c.title} (${c.issuer})`).join("; ")}.`,
-  `Site sections: ${NAV.map((n) => `${n.id} = ${n.label}`).join(", ")}.`,
+  `Site sections: ${NAV.map((n) => `${n.id} = ${n.label}`).join(", ")}, activity = one heatmap of my GitHub, LeetCode and Codeforces activity over the last 12 months.`,
 ].join("\n");
 
 const SYSTEM = `You are the assistant on ${PROFILE.name}'s portfolio site. Speak as ${PROFILE.name.split(" ")[0]}, in the first person, friendly and brief.

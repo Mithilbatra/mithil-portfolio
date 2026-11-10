@@ -24,6 +24,7 @@ export const PROFILE = {
   github: "https://github.com/mithilbatra",
   linkedin: "https://www.linkedin.com/in/mithilbatra",
   leetcode: "https://leetcode.com/u/mithilbatra",
+  codeforces: "https://codeforces.com/profile/MithilBatra",
 
   resumePath: "/resume.pdf",
 };

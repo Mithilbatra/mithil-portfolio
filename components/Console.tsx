@@ -15,7 +15,7 @@ const school = EDUCATION[0];
 export const CTX = {
   profile: PROFILE,
   cases: CASE_FILES,
-  sections: NAV.map((n) => n.id),
+  sections: [...NAV.map((n) => n.id), "activity"], // activity isn't in the header nav (no room), but is reachable
   links: { resume: PROFILE.resumePath, github: PROFILE.github, linkedin: PROFILE.linkedin, leetcode: PROFILE.leetcode },
   cgpa: TELEMETRY.find((m) => m.label === "CGPA")?.value ?? "",
   experience: `${job.role} @ ${job.org} (${job.period}) — ${job.summary}`,
